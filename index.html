@@ -254,25 +254,26 @@ function removeFromPlaylist(index) {
     showMessage(`'${track.name}' removed from playlist.`, 'info');
 }
 
-// *** THIS FUNCTION HAS BEEN UPDATED ***
+
+// *** THIS FUNCTION HAS BEEN UPDATED FOR WINDOWS EXCEL COMPATIBILITY ***
 function exportPlaylistToCSV() {
     if (playlist.length === 0) {
         showMessage('Playlist is empty. Nothing to export.', 'info');
         return;
     }
+    
+    // Using \r\n for Windows-compatible newlines
+    const lineEnding = '\r\n';
 
-    // 1. Use a semicolon (;) as the delimiter for better Excel compatibility in many regions.
-    const headers = "Track Name;Artist Name;URL\n";
+    const headers = `"Track Name";"Artist Name";"URL"${lineEnding}`;
+    
     const csvContent = playlist.map(track => {
-        // Escape double quotes by doubling them, and wrap each field in double quotes.
         const name = `"${(track.name || '').replace(/"/g, '""')}"`;
         const artist = `"${(track.artist || '').replace(/"/g, '""')}"`;
         const url = `"${(track.url || '').replace(/"/g, '""')}"`;
         return `${name};${artist};${url}`;
-    }).join('\n');
+    }).join(lineEnding);
 
-    // 2. Add the UTF-8 BOM (Byte Order Mark) to the beginning of the file.
-    // This character (\uFEFF) is a special marker that tells Excel to open the file with UTF-8 encoding.
     const bom = "\uFEFF";
     
     const blob = new Blob([bom + headers + csvContent], { type: 'text/csv;charset=utf-8;' });
