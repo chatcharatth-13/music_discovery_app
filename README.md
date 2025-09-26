@@ -15,14 +15,15 @@ Built with Python and Tkinter for the desktop app, and HTML/JS for the web inter
 Follow these steps to configure the application before running it.
 
 1. Get a Last.fm API Key
-- The application requires a Last.fm API key to function.
-    - Navigate to https://www.last.fm/api/account/create.
-    - Fill out the application form to receive your personal API Key.
+The application requires a Last.fm API key to function.
+
+-   Navigate to **[https://www.last.fm/api/account/create](https://www.last.fm/api/account/create)**.
+-   Fill out the application form to receive your personal **API Key**.
 
 2. Configure the Project
-    - Open the music_app.py file.
-    - Locate the API_KEY variable at the top of the file.
-    - Replace the placeholder string "YOUR_API_KEY" with the key you obtained.
+- Open the music_app.py file.
+- Locate the API_KEY variable at the top of the file.
+- Replace the placeholder string "YOUR_API_KEY" with the key you obtained.
 
 # In music_app.py
 API_KEY = "ํYOUR API KEY" # <-- Paste your key here
