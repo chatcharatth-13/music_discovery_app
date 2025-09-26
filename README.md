@@ -15,17 +15,18 @@ Built with Python and Tkinter for the desktop app, and HTML/JS for the web inter
 Follow these steps to configure the application before running it.
 
 1. Get a Last.fm API Key
-- The application requires a Last.fm API key to function.
-    - Navigate to https://www.last.fm/api/account/create.
-    - Fill out the application form to receive your personal API Key.
+The application requires a Last.fm API key to function.
+
+-   Navigate to **[https://www.last.fm/api/account/create](https://www.last.fm/api/account/create)**.
+-   Fill out the application form to receive your personal **API Key**.
 
 2. Configure the Project
-    - Open the music_app.py file.
-    - Locate the API_KEY variable at the top of the file.
-    - Replace the placeholder string "YOUR_API_KEY" with the key you obtained.
+- Open the music_app.py file.
+- Locate the API_KEY variable at the top of the file.
+- Replace the placeholder string "YOUR_API_KEY" with the key you obtained.
 
 # In music_app.py
-API_KEY = "c688dcd05e8146a8c075644126070340" # <-- Paste your key here
+API_KEY = "ํYOUR API KEY" # <-- Paste your key here
 
 # 💻 How to Run
 You can run the application in two different ways.
@@ -34,11 +35,11 @@ You can run the application in two different ways.
 This method runs the native tkinter GUI on your machine.
 1. Install dependencies:
 
-`pip install requests`
+    `pip install requests`
 
 2. Run the application:
 
-`python desktop_app.py`
+    `python desktop_app.py`
 
 ## 🐳 Option 2: Run the Web App (Docker)
 This method uses Docker to build and run the web interface in a container.
@@ -46,11 +47,11 @@ Prerequisite: Docker Desktop must be installed and running.
 
 1. Build the Docker image:
 
-`docker build -t music-app .`
+    `docker build -t music-app .`
 
 2. Run the Docker container:
 
-`docker run -p 8080:8000 music-app`
+    `docker run -p 8080:8000 music-app`
 
 3. Access the application:
 
