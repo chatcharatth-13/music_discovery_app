@@ -2,7 +2,7 @@ import requests
 import csv
 
 # --- Configuration ---
-API_KEY = "c688dcd05e8146a8c075644126070340" # Replace with your key
+API_KEY = "YOUR API KEY" # Replace with your key
 BASE_URL = "https://ws.audioscrobbler.com/2.0/"
 
 # --- Object-Oriented Classes ---
