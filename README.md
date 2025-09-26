@@ -25,7 +25,7 @@ Follow these steps to configure the application before running it.
     - Replace the placeholder string "YOUR_API_KEY" with the key you obtained.
 
 # In music_app.py
-API_KEY = "c688dcd05e8146a8c075644126070340" # <-- Paste your key here
+API_KEY = "ํYOUR API KEY" # <-- Paste your key here
 
 # 💻 How to Run
 You can run the application in two different ways.
@@ -34,11 +34,11 @@ You can run the application in two different ways.
 This method runs the native tkinter GUI on your machine.
 1. Install dependencies:
 
-`pip install requests`
+    `pip install requests`
 
 2. Run the application:
 
-`python desktop_app.py`
+    `python desktop_app.py`
 
 ## 🐳 Option 2: Run the Web App (Docker)
 This method uses Docker to build and run the web interface in a container.
@@ -46,11 +46,11 @@ Prerequisite: Docker Desktop must be installed and running.
 
 1. Build the Docker image:
 
-`docker build -t music-app .`
+    `docker build -t music-app .`
 
 2. Run the Docker container:
 
-`docker run -p 8080:8000 music-app`
+    `docker run -p 8080:8000 music-app`
 
 3. Access the application:
 
