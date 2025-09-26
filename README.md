@@ -1,82 +1,58 @@
-Music Discovery App
-This project is a simple music discovery application built in Python, with both a desktop GUI and a web interface. It uses the Last.fm API to find tracks by genre, discover similar artists, and build "Top 10" playlists for a given artist.
+# 🎵 Music Discovery Project (Desktop + Web)
 
-Features
-Search Tracks: Find popular tracks by genre (e.g., "rock", "80s", "electronic").
+A Python-based toolkit for music discovery, featuring both a desktop and web-based UI.
+Built with Python and Tkinter for the desktop app, and HTML/JS for the web interface. Data is fetched from the Last.fm API. The web application is containerized with Docker for easy deployment.
 
-Recommend Artists: Get a list of artists similar to your favorite one.
 
-Build & Export Playlists: Automatically generate a "Top 10" playlist for any artist and save it as a playlist.csv file.
+## ✨ Features
+- Artist Search: Find top tracks for any artist.
+- Similar Artists: Get recommendations based on your favorite artists.
+- Genre Exploration: Discover popular tracks within a specific genre.
+- Playlist Export: Save an artist's top 10 tracks to a .csv file.
 
-Object-Oriented Design: The core logic is structured into Track, Artist, ApiClient, and PlaylistManager classes.
+## 🚀 Getting Started
 
-Dual Interfaces:
+Follow these steps to configure the application before running it.
 
-A desktop application built with Python's native tkinter library.
-
-A web application built with HTML, Tailwind CSS, and vanilla JavaScript.
-
-Setup and Installation
 1. Get a Last.fm API Key
-This application requires a Last.fm API key to function.
+- The application requires a Last.fm API key to function.
+    - Navigate to https://www.last.fm/api/account/create.
+    - Fill out the application form to receive your personal API Key.
 
-Go to the Last.fm API creation page.
-
-Sign up or log in.
-
-Fill out the form (you can enter any name for your application).
-
-You will be given an API Key. Copy this key.
-
-2. Configure the Application
-Open the music_app.py file and replace the placeholder text with your actual API key:
+2. Configure the Project
+    - Open the music_app.py file.
+    - Locate the API_KEY variable at the top of the file.
+    - Replace the placeholder string "YOUR_API_KEY" with the key you obtained.
 
 # In music_app.py
-API_KEY = "YOUR_API_KEY"  # <--- PASTE YOUR KEY HERE
+API_KEY = "c688dcd05e8146a8c075644126070340" # <-- Paste your key here
 
-3. Install Dependencies
-This project requires the requests library to communicate with the API. You can install it using pip:
+# 💻 How to Run
+You can run the application in two different ways.
 
-pip install requests
+## 🖥️ Option 1: Run the Desktop App (Local)
+This method runs the native tkinter GUI on your machine.
+1. Install dependencies:
 
-How to Run
-Running the Desktop App
-To run the desktop GUI version, execute the desktop_app.py script from your terminal:
+`pip install requests`
 
-python desktop_app.py
+2. Run the application:
 
-This will open a window where you can use all the application features.
+`python desktop_app.py`
 
-Running the Web App
-The web app is a single, self-contained file.
+## 🐳 Option 2: Run the Web App (Docker)
+This method uses Docker to build and run the web interface in a container.
+Prerequisite: Docker Desktop must be installed and running.
 
-Simply open the index.html file in your web browser (e.g., Chrome, Firefox, Safari).
+1. Build the Docker image:
 
-The app will first ask for your Last.fm API key, which it will save in your browser's local storage for convenience.
+`docker build -t music-app .`
 
-Once the key is saved, you can use the web interface.
+2. Run the Docker container:
 
-Creating Your GitHub Repository
-You can easily create your own GitHub repository for this project.
+`docker run -p 8080:8000 music-app`
 
-Go to GitHub and create a new, empty repository.
+3. Access the application:
 
-In your local project folder, initialize Git:
-
-git init
-git branch -M main
-
-Add the files to Git:
-
-git add music_app.py desktop_app.py index.html README.md
-# Optional: Add a .gitignore file
-git add .gitignore 
-
-Commit the files:
-
-git commit -m "Initial commit of Music Discovery App"
-
-Link your local repository to the one you created on GitHub and push your code:
-
-git remote add origin <YOUR_GITHUB_REPOSITORY_URL>
-git push -u origin main
+- Open your browser and navigate to `http://localhost:8080.`
+- You will be prompted to enter your API key on first launch.
