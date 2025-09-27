@@ -2,6 +2,7 @@ import requests
 import csv
 
 # --- Configuration ---
+# IMPORTANT: Make sure your key is here!
 API_KEY = "YOUR API KEY" # Replace with your key
 BASE_URL = "https://ws.audioscrobbler.com/2.0/"
 
@@ -18,7 +19,7 @@ class Track:
         return f"Track(name='{self.name}', artist='{self.artist}')"
 
 class Artist:
-    """Represents an artist."""
+    """Represents a single artist."""
     def __init__(self, name, url):
         self.name = name
         self.url = url
@@ -30,90 +31,74 @@ class ApiClient:
     """Handles all communication with the Last.fm API."""
     def __init__(self, api_key):
         self.api_key = api_key
-        if not self.api_key or self.api_key == "YOUR_API_KEY":
-            raise ValueError("API Key is not set. Please add it to music_app.py")
+        self.base_url = BASE_URL
 
     def _get(self, params):
-        """Private method to handle GET requests to the API."""
+        """Private helper method for making GET requests."""
         params['api_key'] = self.api_key
         params['format'] = 'json'
         try:
-            response = requests.get(BASE_URL, params=params)
-            response.raise_for_status()
+            response = requests.get(self.base_url, params=params)
+            response.raise_for_status()  # Raises an exception for bad status codes (4xx or 5xx)
             return response.json()
         except requests.exceptions.RequestException as e:
-            print(f"Error connecting to Last.fm API: {e}")
+            print(f"Error fetching data from API: {e}")
             return None
 
-    def get_top_tracks_by_genre(self, genre, limit=10):
-        """Fetches top tracks for a given genre."""
-        params = { 'method': 'tag.gettoptracks', 'tag': genre, 'limit': limit }
+    def get_top_tracks_by_genre(self, genre, limit=50):
+        params = {'method': 'tag.gettoptracks', 'tag': genre, 'limit': limit}
         data = self._get(params)
         if data and 'tracks' in data and 'track' in data['tracks']:
-            tracks_data = data['tracks']['track']
-            return [Track(t['name'], t['artist']['name'], t['url']) for t in tracks_data]
+            tracks = []
+            for item in data['tracks']['track']:
+                tracks.append(Track(name=item['name'], artist=item['artist']['name'], url=item['url']))
+            return tracks
         return []
 
-    def get_similar_artists(self, artist_name, limit=10):
-        """Fetches artists similar to a given artist."""
-        params = { 'method': 'artist.getsimilar', 'artist': artist_name, 'limit': limit }
+    def get_similar_artists(self, artist_name, limit=50):
+        params = {'method': 'artist.getsimilar', 'artist': artist_name, 'limit': limit}
         data = self._get(params)
         if data and 'similarartists' in data and 'artist' in data['similarartists']:
-            artists_data = data['similarartists']['artist']
-            return [Artist(a['name'], a['url']) for a in artists_data]
+            artists = []
+            for item in data['similarartists']['artist']:
+                artists.append(Artist(name=item['name'], url=item['url']))
+            return artists
         return []
-
-    def get_artist_top_tracks(self, artist_name, limit=10):
-        """Fetches the top 10 tracks for a specific artist."""
-        params = { 'method': 'artist.gettoptracks', 'artist': artist_name, 'limit': limit }
+        
+    def get_artist_top_tracks(self, artist, limit=10):
+        params = {'method': 'artist.gettoptracks', 'artist': artist, 'limit': limit}
         data = self._get(params)
         if data and 'toptracks' in data and 'track' in data['toptracks']:
-            tracks_data = data['toptracks']['track']
-            return [Track(t['name'], t['artist']['name'], t['url']) for t in tracks_data]
+            return [Track(t['name'], t['artist']['name'], t['url']) for t in data['toptracks']['track']]
         return []
 
-
 class PlaylistManager:
-    """Manages creation and storage of playlists."""
+    """Manages a user's playlist."""
     def __init__(self):
         self.playlist = []
 
     def add_track(self, track):
         self.playlist.append(track)
 
+    def get_playlist(self):
+        return self.playlist
+
     def set_playlist(self, tracks):
         self.playlist = tracks
-
-    def clear_playlist(self):
-        self.playlist = []
-
-    def save_playlist_to_csv(self, filename="playlist.csv"):
-        """Saves the current playlist to a CSV file using semicolons."""
-        if not self.playlist:
-            print("Playlist is empty. Nothing to save.")
-            return False
         
-        with open(filename, 'w', newline='', encoding='utf-8-sig') as f:
-            # *** THIS IS THE ONLY LINE THAT CHANGED ***
-            # Using delimiter=';' to match regional settings where comma is a decimal.
-            writer = csv.writer(f, delimiter=';')
-            writer.writerow(['name', 'artist', 'url'])
-            for track in self.playlist:
-                writer.writerow([track.name, track.artist, track.url])
-        return True
-
-    def load_playlist_from_csv(self, filename):
-        """Loads a playlist from a CSV file."""
+    def save_playlist_to_csv(self, artist_name):
+        if not self.playlist:
+            return False, "Playlist is empty."
+        
+        filename = f"playlist_{artist_name.replace(' ', '_')}.csv"
         try:
-            with open(filename, 'r', newline='', encoding='utf-8-sig') as f:
-                reader = csv.reader(f, delimiter=';') # Also need to read with semicolon
-                next(reader)
-                self.playlist = [Track(row[0], row[1], row[2]) for row in reader]
-            return True
-        except FileNotFoundError:
-            print(f"Error: File '{filename}' not found.")
-            return False
-        except Exception as e:
-            print(f"An error occurred while reading the CSV: {e}")
-            return False
+            with open(filename, 'w', newline='', encoding='utf-8-sig') as csvfile:
+                # Use a semicolon as the delimiter for better Excel compatibility
+                writer = csv.writer(csvfile, delimiter=';')
+                writer.writerow(['Track Name', 'Artist Name', 'URL'])
+                for track in self.playlist:
+                    writer.writerow([track.name, track.artist, track.url])
+            return True, f"Playlist saved to {filename}"
+        except IOError as e:
+            return False, f"Error saving file: {e}"
 
