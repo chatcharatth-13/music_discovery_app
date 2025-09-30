@@ -1,0 +1,39 @@
+# This is a GitHub Actions workflow to build and push a Docker image.
+# It automatically runs every time you push code to the 'main' branch.
+
+name: Docker Image CI/CD
+
+on:
+  push:
+    branches: [ "main" ] # Trigger the workflow on pushes to the main branch
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest # Run the job on a fresh virtual machine
+
+    steps:
+      # 1. Check out the repository code
+      # This step downloads your code so the workflow can access it.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Log in to the GitHub Container Registry (GHCR)
+      # This step securely logs in to the Docker registry associated with your GitHub account.
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }} # Your GitHub username
+          password: ${{ secrets.GITHUB_TOKEN }} # A special, secure token provided by GitHub Actions
+
+      # 3. Build and push the Docker image
+      # This step builds the image from your Dockerfile and pushes it to GHCR.
+      # The image will be tagged with 'latest' and your unique git commit hash.
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true # Actually push the image
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
