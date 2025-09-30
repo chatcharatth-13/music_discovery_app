@@ -3,384 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Discovery Web App</title>
+    <title>Music Discovery App - AI Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .glass-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
-        .btn-primary { background-color: #3b82f6; color: white; }
-        .btn-primary:hover { background-color: #2563eb; }
-        .results-table { max-height: 40vh; }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-left-color: #fff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
-<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
+<body class="bg-gray-900 text-white flex flex-col items-center p-4 md:p-8 min-h-screen">
 
-    <div id="app-container" class="w-full max-w-4xl mx-auto">
-        <div class="glass-card rounded-xl shadow-lg p-6 md:p-8 space-y-6">
-            <header class="text-center">
-                <h1 class="text-3xl md:text-4xl font-bold">🎵 Music Discovery</h1>
-                <p class="text-gray-300 mt-2">Find new tracks, similar artists, and build your playlists.</p>
-            </header>
-
-            <main>
-                <!-- Search Section -->
-                <div class="space-y-4">
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <input id="genre-input" type="text" placeholder="Enter a Genre (e.g., rock, pop)" class="flex-grow bg-gray-700 text-white placeholder-gray-400 rounded-lg px-4 py-2 border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button id="search-genre-btn" class="btn-primary font-semibold rounded-lg px-6 py-2 transition-transform transform hover:scale-105">Search Genre</button>
-                    </div>
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <input id="artist-input" type="text" placeholder="Enter an Artist (e.g., Queen)" class="flex-grow bg-gray-700 text-white placeholder-gray-400 rounded-lg px-4 py-2 border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button id="find-similar-btn" class="btn-primary font-semibold rounded-lg px-6 py-2 transition-transform transform hover:scale-105">Find Similar</button>
-                    </div>
-                </div>
-
-                <!-- Results Section -->
-                <div class="mt-8">
-                    <h2 class="text-xl font-semibold mb-4">Results</h2>
-                    <div id="results-container" class="results-table overflow-auto rounded-lg bg-gray-800/50 p-1">
-                        <table class="w-full text-left">
-                            <thead class="sticky top-0 bg-gray-800/80 backdrop-blur-sm">
-                                <tr>
-                                    <th class="p-3">Track / Artist</th>
-                                    <th class="p-3 hidden sm:table-cell">Details</th>
-                                </tr>
-                            </thead>
-                            <tbody id="results-body">
-                                <!-- Results will be injected here -->
-                                <tr><td colspan="2" class="text-center p-8 text-gray-400">Search for something to see results...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Playlist Section -->
-                <div class="mt-8">
-                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-semibold">Your Playlist</h2>
-                        <span id="playlist-count" class="bg-blue-500 text-xs font-bold px-2 py-1 rounded-full">0 tracks</span>
-                    </div>
-                    <div id="playlist-container" class="results-table overflow-auto rounded-lg bg-gray-800/50 p-1">
-                         <table class="w-full text-left">
-                            <thead class="sticky top-0 bg-gray-800/80 backdrop-blur-sm">
-                                <tr>
-                                    <th class="p-3">Track</th>
-                                    <th class="p-3 hidden sm:table-cell">Artist</th>
-                                    <th class="p-3 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="playlist-body">
-                                <tr><td colspan="3" class="text-center p-8 text-gray-400">Your playlist is empty.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="mt-6 flex flex-wrap gap-4 justify-center">
-                    <input id="playlist-artist-input" type="text" placeholder="Artist for Top 10" class="flex-grow bg-gray-700 text-white placeholder-gray-400 rounded-lg px-4 py-2 border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button id="build-top-10-btn" class="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-6 py-2 transition-transform transform hover:scale-105">Build Top 10 by Artist</button>
-                    <button id="export-csv-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg px-6 py-2 transition-transform transform hover:scale-105">Export Playlist (CSV)</button>
-                </div>
-
-            </main>
+    <div id="api-key-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md text-center border border-gray-700">
+            <h2 class="text-2xl font-bold mb-4 text-cyan-400">Welcome!</h2>
+            <p class="mb-6 text-gray-300">Please enter your Last.fm API Key to begin discovering music.</p>
+            <input type="text" id="lastfm-api-key-input" placeholder="Enter Last.fm API Key" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 mb-4 text-white">
+            <button onclick="saveApiKey()" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105">Save Key & Start</button>
+             <p class="text-xs text-gray-500 mt-4">You can get a key from <a href="https://www.last.fm/api/account/create" target="_blank" class="underline hover:text-cyan-400">Last.fm</a>.</p>
         </div>
     </div>
-    
-    <!-- API Key Modal -->
-    <div id="api-key-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 rounded-xl shadow-2xl p-8 max-w-sm w-full text-center space-y-4">
-            <h2 class="text-2xl font-bold">API Key Required</h2>
-            <p class="text-gray-300">Please enter your Last.fm API key to use the app. You can get one for free from Last.fm.</p>
-            <input id="api-key-input" type="text" placeholder="Enter your API Key" class="w-full bg-gray-700 text-white rounded-lg px-4 py-2 border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <button id="save-api-key-btn" class="w-full btn-primary font-semibold rounded-lg px-6 py-3 transition-transform transform hover:scale-105">Save Key & Start</button>
+
+    <div class="w-full max-w-5xl">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">Music Discovery AI</h1>
+            <p class="text-gray-400 mt-2">Find new tracks, similar artists, and get AI-powered playlist summaries.</p>
+        </header>
+
+        <!-- Search Controls -->
+        <div class="bg-gray-800 p-6 rounded-2xl shadow-lg mb-8 border border-gray-700">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="genre-search" class="block text-sm font-medium text-gray-300 mb-2">Search by Genre</label>
+                    <div class="flex">
+                        <input type="text" id="genre-search" class="flex-grow p-3 rounded-l-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g., rock, synthwave">
+                        <button onclick="searchByGenre()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-r-lg transition">Search</button>
+                    </div>
+                </div>
+                <div>
+                    <label for="artist-search" class="block text-sm font-medium text-gray-300 mb-2">Find Similar Artists</label>
+                    <div class="flex">
+                        <input type="text" id="artist-search" class="flex-grow p-3 rounded-l-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g., Queen, Daft Punk">
+                        <button onclick="findSimilarArtists()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-r-lg transition">Find</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Display -->
+        <div id="results-container" class="bg-gray-800 p-6 rounded-2xl shadow-lg mb-8 border border-gray-700 min-h-[200px]">
+             <h2 class="text-xl font-bold mb-4 text-gray-300">Results</h2>
+             <div id="results" class="text-gray-400">Search for something to see results here.</div>
+        </div>
+
+        <!-- Playlist & AI Summary -->
+        <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700">
+            <div class="flex justify-between items-center mb-4">
+                 <h2 class="text-xl font-bold text-gray-300">Your Playlist</h2>
+                 <div class="flex gap-2">
+                    <button id="ai-summary-btn" onclick="generateAISummary()" class="bg-gradient-to-r from-teal-500 to-cyan-600 hover:opacity-90 text-white font-bold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>✨ Generate AI Summary</button>
+                    <button onclick="exportPlaylistToCSV()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition">Export CSV</button>
+                 </div>
+            </div>
+            <div id="playlist" class="mb-6 min-h-[100px] text-gray-400">Your playlist is empty. Search for an artist's top tracks to build one.</div>
+            
+            <!-- AI Summary Display Area -->
+            <div id="ai-summary-container" class="hidden mt-6 p-5 rounded-lg bg-gray-900 border border-cyan-500/30">
+                <h3 class="text-lg font-semibold text-cyan-400 mb-2">AI Playlist Vibe</h3>
+                <div id="ai-summary" class="text-gray-300 whitespace-pre-wrap"></div>
+            </div>
         </div>
     </div>
-    
-    <!-- Message/Alert Box -->
-    <div id="message-box" class="fixed top-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg opacity-0 translate-x-12 transition-all duration-300 z-50">
-        <p id="message-text"></p>
-    </div>
 
-<script>
-// --- CONFIGURATION ---
-const BASE_URL = "https://ws.audioscrobbler.com/2.0/";
-let API_KEY = localStorage.getItem('lastfm_api_key') || '';
+    <script>
+        // --- CONFIGURATION ---
+        // IMPORTANT: Add your API keys here!
+        const GEMINI_API_KEY = "PASTE_YOUR_GEMINI_API_KEY_HERE";
+        let LASTFM_API_KEY = localStorage.getItem('lastfmApiKey');
+        const BASE_URL = "https://ws.audioscrobbler.com/2.0/";
 
-// --- DOM ELEMENTS ---
-const genreInput = document.getElementById('genre-input');
-const artistInput = document.getElementById('artist-input');
-const searchGenreBtn = document.getElementById('search-genre-btn');
-const findSimilarBtn = document.getElementById('find-similar-btn');
-const resultsBody = document.getElementById('results-body');
-const playlistBody = document.getElementById('playlist-body');
-const playlistCount = document.getElementById('playlist-count');
-const playlistArtistInput = document.getElementById('playlist-artist-input');
-const buildTop10Btn = document.getElementById('build-top-10-btn');
-const exportCsvBtn = document.getElementById('export-csv-btn');
-const apiKeyModal = document.getElementById('api-key-modal');
-const apiKeyInput = document.getElementById('api-key-input');
-const saveApiKeyBtn = document.getElementById('save-api-key-btn');
-const messageBox = document.getElementById('message-box');
-const messageText = document.getElementById('message-text');
+        let playlist = [];
 
-// --- STATE ---
-let playlist = [];
+        // Check for Last.fm API key on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!LASTFM_API_KEY) {
+                document.getElementById('api-key-modal').style.display = 'flex';
+            } else {
+                 document.getElementById('api-key-modal').style.display = 'none';
+            }
+            updatePlaylistView();
+        });
 
-// --- API CLIENT ---
-async function apiGet(params) {
-    params.api_key = API_KEY;
-    params.format = 'json';
-    const url = new URL(BASE_URL);
-    url.search = new URLSearchParams(params).toString();
-    
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`API Error: ${response.statusText}`);
+        function saveApiKey() {
+            const input = document.getElementById('lastfm-api-key-input').value;
+            if (input && input.trim() !== '') {
+                LASTFM_API_KEY = input;
+                localStorage.setItem('lastfmApiKey', input);
+                document.getElementById('api-key-modal').style.display = 'none';
+            } else {
+                alert("Please enter a valid API key.");
+            }
         }
-        return await response.json();
-    } catch (error) {
-        showMessage(`Network or API error: ${error.message}`, 'error');
-        console.error("API Fetch Error:", error);
-        return null;
-    }
-}
-
-// --- API FUNCTIONS ---
-async function getTopTracksByGenre(genre, limit = 20) {
-    const data = await apiGet({ method: 'tag.gettoptracks', tag: genre, limit });
-    if (data && data.tracks && data.tracks.track) {
-        return data.tracks.track.map(t => ({ name: t.name, artist: t.artist.name, url: t.url, type: 'track' }));
-    }
-    return [];
-}
-
-async function getSimilarArtists(artist, limit = 20) {
-    const data = await apiGet({ method: 'artist.getsimilar', artist, limit });
-    if (data && data.similarartists && data.similarartists.artist) {
-        return data.similarartists.artist.map(a => ({ name: a.name, url: a.url, type: 'artist' }));
-    }
-    return [];
-}
-
-async function getArtistTopTracks(artist, limit = 10) {
-    const data = await apiGet({ method: 'artist.gettoptracks', artist, limit });
-    if (data && data.toptracks && data.toptracks.track) {
-        return data.toptracks.track.map(t => ({ name: t.name, artist: t.artist.name, url: t.url }));
-    }
-    return [];
-}
-
-// --- UI RENDERING ---
-function renderResults(results) {
-    resultsBody.innerHTML = '';
-    if (!results || results.length === 0) {
-        resultsBody.innerHTML = `<tr><td colspan="2" class="text-center p-8 text-gray-400">No results found. Try another search.</td></tr>`;
-        return;
-    }
-
-    results.forEach(item => {
-        const row = document.createElement('tr');
-        row.className = 'border-b border-gray-700 hover:bg-gray-700/50';
         
-        let detailsHtml = '';
-        let actionButtonHtml = '';
-        
-        if (item.type === 'track') {
-            detailsHtml = `<span class="text-gray-400">${item.artist}</span>`;
-            actionButtonHtml = `<button class="add-to-playlist-btn text-blue-400 hover:text-blue-300 text-2xl" title="Add to Playlist">+</button>`;
-        } else { // artist
-            detailsHtml = `<a href="${item.url}" target="_blank" class="text-blue-400 hover:underline">View on Last.fm</a>`;
-        }
-
-        row.innerHTML = `
-            <td class="p-3">
-                <div class="font-semibold">${item.name}</div>
-                <div class="sm:hidden text-sm text-gray-400">${item.type === 'track' ? item.artist : ''}</div>
-            </td>
-            <td class="p-3 hidden sm:table-cell">${detailsHtml}</td>
-            <td class="p-3 text-right">${item.type === 'track' ? actionButtonHtml : ''}</td>
-        `;
-        
-        if (item.type === 'track') {
-            row.querySelector('.add-to-playlist-btn').addEventListener('click', () => {
-                addToPlaylist({ name: item.name, artist: item.artist, url: item.url });
+        // --- API CALLS ---
+        async function apiCall(params) {
+            if (!LASTFM_API_KEY) {
+                alert("Last.fm API Key is not set!");
+                document.getElementById('api-key-modal').style.display = 'flex';
+                return;
+            }
+            const urlParams = new URLSearchParams({
+                ...params,
+                api_key: LASTFM_API_KEY,
+                format: 'json'
             });
+            const url = `${BASE_URL}?${urlParams}`;
+            
+            document.getElementById('results').innerHTML = '<div class="flex justify-center items-center h-full"><div class="spinner"></div></div>';
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("API call failed:", error);
+                document.getElementById('results').innerText = `Error: ${error.message}. Please check your API key and network connection.`;
+                return null;
+            }
         }
-        resultsBody.appendChild(row);
-    });
-}
 
-function renderPlaylist() {
-    playlistBody.innerHTML = '';
-    playlistCount.textContent = `${playlist.length} tracks`;
-    
-    if (playlist.length === 0) {
-        playlistBody.innerHTML = `<tr><td colspan="3" class="text-center p-8 text-gray-400">Your playlist is empty.</td></tr>`;
-        return;
-    }
-
-    playlist.forEach((track, index) => {
-        const row = document.createElement('tr');
-        row.className = 'border-b border-gray-700';
-        row.innerHTML = `
-            <td class="p-3 font-semibold">${track.name}</td>
-            <td class="p-3 hidden sm:table-cell text-gray-300">${track.artist}</td>
-            <td class="p-3 text-right">
-                <button data-index="${index}" class="remove-from-playlist-btn text-red-400 hover:text-red-300" title="Remove">✖</button>
-            </td>
-        `;
-        playlistBody.appendChild(row);
-    });
-}
-
-// --- PLAYLIST LOGIC ---
-function addToPlaylist(track) {
-    if (!playlist.some(p => p.name === track.name && p.artist === track.artist)) {
-        playlist.push(track);
-        renderPlaylist();
-        showMessage(`'${track.name}' added to playlist!`, 'success');
-    } else {
-        showMessage(`'${track.name}' is already in the playlist.`, 'info');
-    }
-}
-
-function removeFromPlaylist(index) {
-    const track = playlist[index];
-    playlist.splice(index, 1);
-    renderPlaylist();
-    showMessage(`'${track.name}' removed from playlist.`, 'info');
-}
-
-
-// *** THIS FUNCTION HAS BEEN UPDATED FOR WINDOWS EXCEL COMPATIBILITY ***
-function exportPlaylistToCSV() {
-    if (playlist.length === 0) {
-        showMessage('Playlist is empty. Nothing to export.', 'info');
-        return;
-    }
-    
-    // Using \r\n for Windows-compatible newlines
-    const lineEnding = '\r\n';
-
-    const headers = `"Track Name";"Artist Name";"URL"${lineEnding}`;
-    
-    const csvContent = playlist.map(track => {
-        const name = `"${(track.name || '').replace(/"/g, '""')}"`;
-        const artist = `"${(track.artist || '').replace(/"/g, '""')}"`;
-        const url = `"${(track.url || '').replace(/"/g, '""')}"`;
-        return `${name};${artist};${url}`;
-    }).join(lineEnding);
-
-    const bom = "\uFEFF";
-    
-    const blob = new Blob([bom + headers + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    
-    link.setAttribute("href", url);
-    link.setAttribute("download", "my_music_playlist.csv");
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showMessage('Playlist exported as my_music_playlist.csv!', 'success');
-}
-
-
-// --- EVENT LISTENERS ---
-searchGenreBtn.addEventListener('click', async () => {
-    const genre = genreInput.value.trim();
-    if (!genre) return;
-    showMessage('Searching for genres...', 'info');
-    const tracks = await getTopTracksByGenre(genre);
-    renderResults(tracks);
-});
-
-findSimilarBtn.addEventListener('click', async () => {
-    const artist = artistInput.value.trim();
-    if (!artist) return;
-    showMessage('Finding similar artists...', 'info');
-    const artists = await getSimilarArtists(artist);
-    renderResults(artists);
-});
-
-buildTop10Btn.addEventListener('click', async () => {
-    const artist = playlistArtistInput.value.trim();
-    if (!artist) {
-        showMessage('Please enter an artist name to build a Top 10 list.', 'error');
-        return;
-    }
-    showMessage(`Building Top 10 for ${artist}...`, 'info');
-    const topTracks = await getArtistTopTracks(artist);
-    if (topTracks && topTracks.length > 0) {
-        playlist = topTracks;
-        renderPlaylist();
-        showMessage(`Top 10 playlist for ${artist} has been created!`, 'success');
-    } else {
-        showMessage(`Could not find a Top 10 list for ${artist}.`, 'error');
-    }
-});
-
-exportCsvBtn.addEventListener('click', exportPlaylistToCSV);
-
-playlistBody.addEventListener('click', (e) => {
-    if (e.target.classList.contains('remove-from-playlist-btn')) {
-        const index = parseInt(e.target.dataset.index, 10);
-        removeFromPlaylist(index);
-    }
-});
-
-// --- UTILITY ---
-function showMessage(text, type = 'success') {
-    messageText.textContent = text;
-    messageBox.className = messageBox.className.replace(/bg-(green|red|blue)-500/g, ''); // Reset color
-    if (type === 'error') {
-        messageBox.classList.add('bg-red-500');
-    } else if (type === 'info') {
-        messageBox.classList.add('bg-blue-500');
-    } else {
-        messageBox.classList.add('bg-green-500');
-    }
-
-    messageBox.classList.remove('opacity-0', 'translate-x-12');
-    setTimeout(() => {
-        messageBox.classList.add('opacity-0', 'translate-x-12');
-    }, 3000);
-}
-
-// --- INITIALIZATION ---
-function init() {
-    if (!API_KEY) {
-        apiKeyModal.classList.remove('hidden');
-        apiKeyModal.classList.add('flex');
-    } else {
-        apiKeyModal.classList.add('hidden');
-        apiKeyModal.classList.remove('flex');
-    }
-
-    saveApiKeyBtn.addEventListener('click', () => {
-        const key = apiKeyInput.value.trim();
-        if (key) {
-            API_KEY = key;
-            localStorage.setItem('lastfm_api_key', key);
-            apiKeyModal.classList.add('hidden');
-            apiKeyModal.classList.remove('flex');
-            showMessage('API Key saved!', 'success');
-        } else {
-            showMessage('Please enter a valid API key.', 'error');
+        async function searchByGenre() {
+            const genre = document.getElementById('genre-search').value;
+            if (!genre) return;
+            const data = await apiCall({ method: 'tag.gettoptracks', tag: genre, limit: 20 });
+            if (data && data.tracks && data.tracks.track) {
+                displayTracks(data.tracks.track);
+            } else {
+                document.getElementById('results').innerText = `No tracks found for genre: ${genre}`;
+            }
         }
-    });
 
-    renderPlaylist(); // Initial render
-}
+        async function findSimilarArtists() {
+            const artist = document.getElementById('artist-search').value;
+            if (!artist) return;
+            const data = await apiCall({ method: 'artist.getsimilar', artist: artist, limit: 20 });
+            if (data && data.similarartists && data.similarartists.artist) {
+                displayArtists(data.similarartists.artist);
+            } else {
+                document.getElementById('results').innerText = `Could not find similar artists for: ${artist}`;
+            }
+        }
 
-init();
+        async function getTopTracks(artistName) {
+            const data = await apiCall({ method: 'artist.gettoptracks', artist: artistName, limit: 10 });
+             if (data && data.toptracks && data.toptracks.track) {
+                playlist = data.toptracks.track.map(t => ({
+                    name: t.name,
+                    artist: t.artist.name
+                }));
+                updatePlaylistView();
+                document.getElementById('results').innerText = `Top 10 tracks for ${artistName} have been added to your playlist.`;
+            } else {
+                document.getElementById('results').innerText = `Could not find top tracks for: ${artistName}`;
+            }
+        }
 
-</script>
+        // --- UI DISPLAY ---
+        function displayTracks(tracks) {
+            let html = '<ul class="space-y-2">';
+            tracks.forEach(track => {
+                html += `<li class="p-3 bg-gray-700/50 rounded-lg">${track.name} <span class="text-gray-400">by ${track.artist.name}</span></li>`;
+            });
+            html += '</ul>';
+            document.getElementById('results').innerHTML = html;
+        }
+        
+        function displayArtists(artists) {
+            let html = '<ul class="space-y-2">';
+            artists.forEach(artist => {
+                html += `<li class="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+                            <span>${artist.name}</span>
+                            <button onclick="getTopTracks('${artist.name.replace(/'/g, "\\'")}')" class="bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold py-1 px-3 rounded-md transition">Build Top 10</button>
+                         </li>`;
+            });
+            html += '</ul>';
+            document.getElementById('results').innerHTML = html;
+        }
+
+        function updatePlaylistView() {
+            const playlistEl = document.getElementById('playlist');
+            const aiButton = document.getElementById('ai-summary-btn');
+
+            if (playlist.length === 0) {
+                playlistEl.innerHTML = '<p class="text-gray-400">Your playlist is empty. Search for an artist\'s top tracks to build one.</p>';
+                aiButton.disabled = true;
+                document.getElementById('ai-summary-container').classList.add('hidden');
+            } else {
+                let html = '<ol class="list-decimal list-inside space-y-2">';
+                playlist.forEach(track => {
+                    html += `<li class="text-gray-200">${track.name} <span class="text-gray-400">by ${track.artist}</span></li>`;
+                });
+                html += '</ol>';
+                playlistEl.innerHTML = html;
+                aiButton.disabled = false;
+            }
+        }
+
+        // --- CSV EXPORT ---
+        function exportPlaylistToCSV() {
+            if (playlist.length === 0) {
+                alert("Playlist is empty!");
+                return;
+            }
+            const headers = "name;artist\r\n";
+            const csvContent = playlist.map(track => `"${track.name}";"${track.artist}"`).join("\r\n");
+            
+            // BOM for Excel compatibility with UTF-8
+            const bom = "\uFEFF";
+            const blob = new Blob([bom + headers + csvContent], { type: 'text/csv;charset=utf-8;' });
+            
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            const artistName = playlist[0].artist.replace(/\s+/g, '_');
+            link.setAttribute("download", `playlist_${artistName}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- AI INTEGRATION ---
+        async function generateAISummary() {
+            if (GEMINI_API_KEY === "AIzaSyA9NKG4dW6GJ7lrLiCdlITwJ1UfL19z0Bc") {
+                alert("Please add your Gemini API Key to the index.html file.");
+                return;
+            }
+
+            const summaryContainer = document.getElementById('ai-summary-container');
+            const summaryEl = document.getElementById('ai-summary');
+            const aiButton = document.getElementById('ai-summary-btn');
+
+            summaryContainer.classList.remove('hidden');
+            summaryEl.innerHTML = '<div class="flex items-center gap-2"><div class="spinner border-l-cyan-400 w-6 h-6"></div><span>Generating summary...</span></div>';
+            aiButton.disabled = true;
+
+            const playlistText = playlist.map(t => `${t.name} by ${t.artist}`).join(', ');
+            
+            const systemPrompt = "You are a creative and knowledgeable music expert, like a radio DJ. Your tone is engaging and descriptive.";
+            const userPrompt = `Based on the following playlist, write a short, creative paragraph (3-4 sentences) describing the overall mood, vibe, and genre of this collection. Playlist: ${playlistText}`;
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
+            
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error: ${errorData.error.message}`);
+                }
+
+                const result = await response.json();
+                const text = result.candidates[0].content.parts[0].text;
+                summaryEl.innerText = text;
+
+            } catch (error) {
+                summaryEl.innerText = `An error occurred: ${error.message}`;
+                console.error("AI summary generation failed:", error);
+            } finally {
+                aiButton.disabled = false;
+            }
+        }
+    </script>
+
 </body>
 </html>
 
