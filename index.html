@@ -74,7 +74,7 @@
                     <button onclick="exportPlaylistToCSV()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition">Export CSV</button>
                  </div>
             </div>
-            <div id="playlist" class="mb-6 min-h-[100px] text-gray-400">Your playlist is empty. Search for an artist's top tracks to build one.</div>
+            <div id="playlist" class="mb-6 min-h-[100px] text-gray-400">Your playlist is empty. Build a Top 10 or add tracks from genre search.</div>
             
             <!-- AI Summary Display Area -->
             <div id="ai-summary-container" class="hidden mt-6 p-5 rounded-lg bg-gray-900 border border-cyan-500/30">
@@ -86,14 +86,12 @@
 
     <script>
         // --- CONFIGURATION ---
-        // IMPORTANT: Add your API keys here!
-        const GEMINI_API_KEY = "AIzaSyA9NKG4dW6GJ7lrLiCdlITwJ1UfL19z0Bc";
+        const GEMINI_API_KEY = "AIzaSyA9NKG4dW6GJ7IrLiCdIITwj1UfL19z0Bc"; // Replace with your key if needed
         let LASTFM_API_KEY = localStorage.getItem('lastfmApiKey');
         const BASE_URL = "https://ws.audioscrobbler.com/2.0/";
 
         let playlist = [];
 
-        // Check for Last.fm API key on page load
         document.addEventListener('DOMContentLoaded', () => {
             if (!LASTFM_API_KEY) {
                 document.getElementById('api-key-modal').style.display = 'flex';
@@ -114,27 +112,20 @@
             }
         }
         
-        // --- API CALLS ---
         async function apiCall(params) {
             if (!LASTFM_API_KEY) {
                 alert("Last.fm API Key is not set!");
                 document.getElementById('api-key-modal').style.display = 'flex';
                 return;
             }
-            const urlParams = new URLSearchParams({
-                ...params,
-                api_key: LASTFM_API_KEY,
-                format: 'json'
-            });
+            const urlParams = new URLSearchParams({ ...params, api_key: LASTFM_API_KEY, format: 'json' });
             const url = `${BASE_URL}?${urlParams}`;
             
             document.getElementById('results').innerHTML = '<div class="flex justify-center items-center h-full"><div class="spinner"></div></div>';
 
             try {
                 const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 return await response.json();
             } catch (error) {
                 console.error("API call failed:", error);
@@ -164,14 +155,27 @@
                 document.getElementById('results').innerText = `Could not find similar artists for: ${artist}`;
             }
         }
+        
+        // --- PLAYLIST LOGIC ---
+        // --- NEW FUNCTION ---
+        // Adds a single track object to the playlist
+        function addTrackToPlaylist(name, artist) {
+            playlist.push({ name: name, artist: artist });
+            updatePlaylistView();
+            // Optional: Give user feedback
+            const resultsEl = document.getElementById('results');
+            resultsEl.insertAdjacentHTML('afterbegin', `<div id="feedback" class="p-3 mb-4 bg-green-500/20 text-green-300 rounded-lg">Added "${name}" to your playlist!</div>`);
+            setTimeout(() => {
+                const feedbackEl = document.getElementById('feedback');
+                if(feedbackEl) feedbackEl.remove();
+            }, 2000);
+        }
 
         async function getTopTracks(artistName) {
             const data = await apiCall({ method: 'artist.gettoptracks', artist: artistName, limit: 10 });
              if (data && data.toptracks && data.toptracks.track) {
-                playlist = data.toptracks.track.map(t => ({
-                    name: t.name,
-                    artist: t.artist.name
-                }));
+                // This now REPLACES the playlist
+                playlist = data.toptracks.track.map(t => ({ name: t.name, artist: t.artist.name }));
                 updatePlaylistView();
                 document.getElementById('results').innerText = `Top 10 tracks for ${artistName} have been added to your playlist.`;
             } else {
@@ -181,9 +185,17 @@
 
         // --- UI DISPLAY ---
         function displayTracks(tracks) {
+            // <!-- MODIFIED to include an "Add" button -->
             let html = '<ul class="space-y-2">';
             tracks.forEach(track => {
-                html += `<li class="p-3 bg-gray-700/50 rounded-lg">${track.name} <span class="text-gray-400">by ${track.artist.name}</span></li>`;
+                // Sanitize track and artist names for the function call
+                const safeTrackName = track.name.replace(/'/g, "\\'");
+                const safeArtistName = track.artist.name.replace(/'/g, "\\'");
+
+                html += `<li class="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
+                            <div>${track.name} <span class="text-gray-400">by ${track.artist.name}</span></div>
+                            <button onclick="addTrackToPlaylist('${safeTrackName}', '${safeArtistName}')" class="bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-bold py-1 px-3 rounded-md transition">Add</button>
+                         </li>`;
             });
             html += '</ul>';
             document.getElementById('results').innerHTML = html;
@@ -206,7 +218,7 @@
             const aiButton = document.getElementById('ai-summary-btn');
 
             if (playlist.length === 0) {
-                playlistEl.innerHTML = '<p class="text-gray-400">Your playlist is empty. Search for an artist\'s top tracks to build one.</p>';
+                playlistEl.innerHTML = '<p class="text-gray-400">Your playlist is empty. Build a Top 10 or add tracks from genre search.</p>';
                 aiButton.disabled = true;
                 document.getElementById('ai-summary-container').classList.add('hidden');
             } else {
@@ -220,36 +232,23 @@
             }
         }
 
-        // --- CSV EXPORT ---
         function exportPlaylistToCSV() {
-            if (playlist.length === 0) {
-                alert("Playlist is empty!");
-                return;
-            }
+            if (playlist.length === 0) { alert("Playlist is empty!"); return; }
             const headers = "name;artist\r\n";
             const csvContent = playlist.map(track => `"${track.name}";"${track.artist}"`).join("\r\n");
-            
-            // BOM for Excel compatibility with UTF-8
             const bom = "\uFEFF";
             const blob = new Blob([bom + headers + csvContent], { type: 'text/csv;charset=utf-8;' });
-            
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
             link.setAttribute("href", url);
-            const artistName = playlist[0].artist.replace(/\s+/g, '_');
+            const artistName = playlist.length > 0 ? playlist[0].artist.replace(/\s+/g, '_') : 'custom';
             link.setAttribute("download", `playlist_${artistName}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
-        // --- AI INTEGRATION ---
         async function generateAISummary() {
-            if (GEMINI_API_KEY === "PASTE_YOUR_GEMINI_API_KEY_HERE") {
-                alert("Please add your Gemini API Key to the index.html file.");
-                return;
-            }
-
             const summaryContainer = document.getElementById('ai-summary-container');
             const summaryEl = document.getElementById('ai-summary');
             const aiButton = document.getElementById('ai-summary-btn');
@@ -259,33 +258,16 @@
             aiButton.disabled = true;
 
             const playlistText = playlist.map(t => `${t.name} by ${t.artist}`).join(', ');
-            
             const systemPrompt = "You are a creative and knowledgeable music expert, like a radio DJ. Your tone is engaging and descriptive.";
             const userPrompt = `Based on the following playlist, write a short, creative paragraph (3-4 sentences) describing the overall mood, vibe, and genre of this collection. Playlist: ${playlistText}`;
-
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
-            
-            const payload = {
-                contents: [{ parts: [{ text: userPrompt }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-            };
+            const payload = { contents: [{ parts: [{ text: userPrompt }] }], systemInstruction: { parts: [{ text: systemPrompt }] },};
 
             try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`API Error: ${errorData.error.message}`);
-                }
-
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) { const errorData = await response.json(); throw new Error(`API Error: ${errorData.error.message}`); }
                 const result = await response.json();
-                const text = result.candidates[0].content.parts[0].text;
-                summaryEl.innerText = text;
-
+                summaryEl.innerText = result.candidates[0].content.parts[0].text;
             } catch (error) {
                 summaryEl.innerText = `An error occurred: ${error.message}`;
                 console.error("AI summary generation failed:", error);
