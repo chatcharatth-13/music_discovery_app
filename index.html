@@ -86,9 +86,9 @@
 
     <script>
         // --- CONFIGURATION ---
-        const GEMINI_API_KEY = "AIzaSyA9NKG4dW6GJ7IrLiCdIITwj1UfL19z0Bc"; // Replace with your key if needed
+        const GEMINI_API_KEY = "AIzaSyA9NKG4dW6GJ7lrLiCdlITwJ1UfL19z0Bc"; // Your proven-working key
         let LASTFM_API_KEY = localStorage.getItem('lastfmApiKey');
-        // --- FIX: Use HTTPS for the API endpoint to avoid Mixed Content errors ---
+        // --- CRITICAL FIX: The API endpoint MUST use HTTPS to avoid security errors in the browser ---
         const BASE_URL = "https://ws.audioscrobbler.com/2.0/";
 
         let playlist = [];
@@ -162,11 +162,13 @@
             playlist.push({ name: name, artist: artist });
             updatePlaylistView();
             const resultsEl = document.getElementById('results');
+            const feedbackEl = document.getElementById('feedback');
+            if (feedbackEl) feedbackEl.remove(); // Remove old feedback first
             resultsEl.insertAdjacentHTML('afterbegin', `<div id="feedback" class="p-3 mb-4 bg-green-500/20 text-green-300 rounded-lg">Added "${name}" to your playlist!</div>`);
             setTimeout(() => {
-                const feedbackEl = document.getElementById('feedback');
-                if(feedbackEl) feedbackEl.remove();
-            }, 2000);
+                const currentFeedback = document.getElementById('feedback');
+                if(currentFeedback) currentFeedback.remove();
+            }, 2500);
         }
 
         async function getTopTracks(artistName) {
