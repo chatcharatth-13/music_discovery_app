@@ -1,0 +1,20 @@
+# This file defines how to run our application using Docker Compose.
+# It's a simpler way to manage the 'docker run' command settings.
+
+# Specifies the version of the Docker Compose file format.
+version: '3.8'
+
+# Defines the services (containers) that make up our application.
+services:
+  # We only have one service, which we'll call 'music-app'.
+  music-app:
+    # 'build: .' tells Docker Compose to build an image from the Dockerfile
+    # located in the current directory.
+    build: .
+    # 'ports' maps a port on your computer (the host) to a port inside the container.
+    # It's the same as the '-p' flag in 'docker run'.
+    # We map port 8080 on our computer to port 8000 where the app is running.
+    ports:
+      - "8080:8000"
+    # Gives the running container a predictable name for easy management.
+    container_name: music-discovery-app-web
