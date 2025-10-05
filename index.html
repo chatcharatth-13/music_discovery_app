@@ -88,6 +88,7 @@
         // --- CONFIGURATION ---
         const GEMINI_API_KEY = "AIzaSyA9NKG4dW6GJ7IrLiCdIITwj1UfL19z0Bc"; // Replace with your key if needed
         let LASTFM_API_KEY = localStorage.getItem('lastfmApiKey');
+        // --- FIX: Use HTTPS for the API endpoint to avoid Mixed Content errors ---
         const BASE_URL = "https://ws.audioscrobbler.com/2.0/";
 
         let playlist = [];
@@ -157,12 +158,9 @@
         }
         
         // --- PLAYLIST LOGIC ---
-        // --- NEW FUNCTION ---
-        // Adds a single track object to the playlist
         function addTrackToPlaylist(name, artist) {
             playlist.push({ name: name, artist: artist });
             updatePlaylistView();
-            // Optional: Give user feedback
             const resultsEl = document.getElementById('results');
             resultsEl.insertAdjacentHTML('afterbegin', `<div id="feedback" class="p-3 mb-4 bg-green-500/20 text-green-300 rounded-lg">Added "${name}" to your playlist!</div>`);
             setTimeout(() => {
@@ -174,7 +172,6 @@
         async function getTopTracks(artistName) {
             const data = await apiCall({ method: 'artist.gettoptracks', artist: artistName, limit: 10 });
              if (data && data.toptracks && data.toptracks.track) {
-                // This now REPLACES the playlist
                 playlist = data.toptracks.track.map(t => ({ name: t.name, artist: t.artist.name }));
                 updatePlaylistView();
                 document.getElementById('results').innerText = `Top 10 tracks for ${artistName} have been added to your playlist.`;
@@ -185,13 +182,10 @@
 
         // --- UI DISPLAY ---
         function displayTracks(tracks) {
-            // <!-- MODIFIED to include an "Add" button -->
             let html = '<ul class="space-y-2">';
             tracks.forEach(track => {
-                // Sanitize track and artist names for the function call
                 const safeTrackName = track.name.replace(/'/g, "\\'");
                 const safeArtistName = track.artist.name.replace(/'/g, "\\'");
-
                 html += `<li class="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
                             <div>${track.name} <span class="text-gray-400">by ${track.artist.name}</span></div>
                             <button onclick="addTrackToPlaylist('${safeTrackName}', '${safeArtistName}')" class="bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-bold py-1 px-3 rounded-md transition">Add</button>
