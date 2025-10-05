@@ -75,3 +75,6 @@ Prerequisite: Docker Desktop must be installed and running.
 
 - Open your browser and navigate to `http://localhost:8080.`
 - You will be prompted to enter your API key on first launch.
+
+## Presentation
+* **Presentation:** [Canva](https://www.canva.com/design/DAG080yKLBY/Na_3QYv2L9UHs8icxmwIrg/view?utm_content=DAG080yKLBY&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hd521b16a5d)
