@@ -5,7 +5,7 @@ Welcome to the Music Discovery App, a comprehensive application designed to help
 Live Demo: https://music-discovery-app-aq3i.onrender.com/
 
 ## ✨ Key Features
-# This application is packed with features designed for a seamless music discovery experience:
+This application is packed with features designed for a seamless music discovery experience:
 - Dual Interfaces: Choose between a polished Desktop App (built with Python/Tkinter) or a responsive Web App.
 - Multi-faceted Search:
   - Discover tracks by searching for any Genre.
@@ -20,7 +20,7 @@ Live Demo: https://music-discovery-app-aq3i.onrender.com/
 - Cloud Deployed: The web application is live and publicly accessible, deployed on Render.
 
 ## 🛠️ Tech Stack & Architecture
-# This project utilizes a modern stack to deliver a robust and feature-rich experience.
+This project utilizes a modern stack to deliver a robust and feature-rich experience.
 - Backend & Core Logic: Python, Object-Oriented Programming (OOP)
 - Desktop GUI: Tkinter, ttkbootstrap for modern themes
 - Web Frontend: HTML, Tailwind CSS, Vanilla JavaScript
