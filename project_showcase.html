@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Showcase: Music Discovery AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; scroll-behavior: smooth; }
+        .tab-active { color: #2dd4bf; border-color: #2dd4bf; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: -21px;
+            width: 12px;
+            height: 12px;
+            background-color: #374151;
+            border: 2px solid #0d9488;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .phase-content {
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .phase-content.open {
+            max-height: 1000px; /* Adjust as needed */
+            opacity: 1;
+        }
+        /* Placeholders for critical comments */
+        /* <!-- Chosen Palette: "Cyber Teal" - A professional theme with a dark base (slate), cool gray accents, and vibrant teal/cyan highlights for interactive elements, conveying a modern tech aesthetic. --> */
+        /* <!-- Application Structure Plan: A single-page application with a top navigation bar for smooth scrolling to key sections: Project Pitch (overview), Architecture (tech stack), and Development Plan (interactive timeline). This structure allows users to either get a quick overview or deep-dive into the project's process. The core interaction is the expandable timeline for the development plan, which presents a large amount of information in a digestible, user-controlled manner, superior to a long, static document. --> */
+        /* <!-- Visualization & Content Choices: The report is qualitative, focusing on process and structure, so no data charts are used. Information is presented with: 1. Goal: Organize -> Method: HTML/CSS System Architecture Diagram (Tailwind Flex/Grid) to visually explain the project's components. 2. Goal: Show Process -> Method: Interactive Vertical Timeline for the Development Plan, using JS to expand/collapse phase details for clarity and engagement. 3. Goal: Inform -> Method: Structured Tables and Lists for checklists, providing clear, readable details. All methods are interactive and avoid SVG/Mermaid as required. --> */
+        /* <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. --> */
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-300">
+
+    <!-- Header & Navigation -->
+    <header class="bg-slate-900/70 backdrop-blur-lg sticky top-0 z-40 w-full border-b border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-teal-400">Project Showcase</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#pitch" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-teal-400">Project Pitch</a>
+                        <a href="#architecture" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-teal-400">Architecture</a>
+                        <a href="#plan" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-teal-400">Development Plan</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Project Pitch Section -->
+        <section id="pitch" class="mb-20">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500">Music Discovery AI</h1>
+                <p class="mt-4 text-lg text-slate-400">แอปพลิเคชันค้นหาเพลงอัจฉริยะที่มาพร้อม UI สองรูปแบบ, การผนวก AI, และกระบวนการ CI/CD ที่สมบูรณ์</p>
+            </div>
+
+            <div class="bg-slate-800 rounded-xl shadow-lg p-6 md:p-8 border border-slate-700">
+                <h2 class="text-2xl font-bold text-teal-400 mb-6">ภาพรวมโครงการ (Project Pitch)</h2>
+                <p class="mb-6 text-slate-400">
+                    เอกสารนี้นำเสนอภาพรวมของโปรเจกต์ Music Discovery App โดยปรับปรุงเนื้อหาให้สอดคล้องกับผลลัพธ์สุดท้ายของโปรเจกต์ ซึ่งเน้นการพัฒนาแอปพลิเคชันที่มีส่วนติดต่อผู้ใช้แบบกราฟิก (GUI), การผนวก AI, และการทำ CI/CD และ Cloud Deployment ที่เป็นมาตรฐานอุตสาหกรรม
+                </p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-slate-400">
+                        <thead class="text-xs text-teal-400 uppercase bg-slate-700/50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">ข้อมูลโครงการ</th>
+                                <th scope="col" class="px-6 py-3">รายละเอียดตามผลลัพธ์ของโปรเจกต์</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-slate-700">
+                                <td class="px-6 py-4 font-semibold text-white">ประเภทโครงการ</td>
+                                <td class="px-6 py-4">Desktop GUI และ **Cloud-Deployed** Web Application</td>
+                            </tr>
+                            <tr class="border-b border-slate-700">
+                                <td class="px-6 py-4 font-semibold text-white">ฟังก์ชันหลัก</td>
+                                <td class="px-6 py-4">ค้นหาเพลง/ศิลปิน, สร้าง Playlist, **รับบทสรุป Playlist ด้วย AI**, และส่งออกเป็นไฟล์ CSV</td>
+                            </tr>
+                            <tr class="border-b border-slate-700">
+                                <td class="px-6 py-4 font-semibold text-white">แนวคิดหลัก #1</td>
+                                <td class="px-6 py-4">**Multi-Platform Development & API Integration:** พัฒนาแอปพลิเคชันที่ใช้งานได้ทั้งบน Desktop (Python) และ Web (JavaScript) โดยทั้งสองมีการเรียกใช้ API ภายนอก (Last.fm, Google Gemini) และประมวลผลข้อมูล JSON</td>
+                            </tr>
+                            <tr class="border-b border-slate-700">
+                                <td class="px-6 py-4 font-semibold text-white">แนวคิดหลัก #2</td>
+                                <td class="px-6 py-4">**Object-Oriented & Modular Design:** ออกแบบโดยแยกส่วน Logic หลัก (`music_app.py`) ออกจากส่วนการแสดงผล (`desktop_app.py`, `index.html`) อย่างชัดเจน</td>
+                            </tr>
+                            <tr class="border-b border-slate-700">
+                                <td class="px-6 py-4 font-semibold text-white">แนวคิดหลัก #3</td>
+                                <td class="px-6 py-4">**Modern DevOps & Cloud Deployment:** สร้างกระบวนการ CI/CD Pipeline อัตโนมัติด้วย GitHub Actions เพื่อ build Docker image และทำการ Cloud Deployment ไปยัง Render</td>
+                            </tr>
+                             <tr>
+                                <td class="px-6 py-4 font-semibold text-white">แนวคิดส่วนขยายที่เป็นไปได้</td>
+                                <td class="px-6 py-4">
+                                    <ul class="list-disc list-inside">
+                                        <li>การบันทึก Playlist บน Cloud (เช่น Firebase)</li>
+                                        <li>การเชื่อมต่อกับบริการ Streaming (เช่น Spotify)</li>
+                                        <li>ปรับปรุงระบบแนะนำเพลงให้แม่นยำยิ่งขึ้น</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Section -->
+        <section id="architecture" class="mb-20">
+             <h2 class="text-3xl font-bold text-center mb-12 text-teal-400">สถาปัตยกรรมและเทคโนโลยี</h2>
+             <p class="text-center text-slate-400 max-w-3xl mx-auto mb-12">
+                โปรเจกต์นี้มีโครงสร้างที่แยกส่วนกันอย่างชัดเจน ประกอบด้วยส่วน Core Logic ที่เป็นแกนกลาง, ส่วนติดต่อผู้ใช้สองรูปแบบ, และเชื่อมต่อกับบริการภายนอกผ่าน CI/CD Pipeline ที่ทำงานโดยอัตโนมัติ
+             </p>
+            <div class="bg-slate-800 rounded-xl shadow-lg p-6 md:p-8 border border-slate-700">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-8 items-center text-center">
+                    <!-- Column 1: UI -->
+                    <div class="flex flex-col gap-4">
+                        <div class="p-4 bg-slate-700 rounded-lg">
+                            <h3 class="font-bold text-white">Desktop App</h3>
+                            <p class="text-xs text-slate-400">ttkbootstrap</p>
+                        </div>
+                        <div class="p-4 bg-slate-700 rounded-lg">
+                             <h3 class="font-bold text-white">Web App</h3>
+                            <p class="text-xs text-slate-400">HTML/JS/Tailwind</p>
+                        </div>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="text-teal-400 text-2xl font-mono hidden md:block">&#x2192;</div>
+                    <!-- Column 2: Core Logic -->
+                    <div class="p-6 bg-teal-900/50 rounded-lg border border-teal-500">
+                        <h3 class="font-bold text-xl text-white">Core Logic</h3>
+                        <p class="text-sm text-slate-300">Python OOP</p>
+                        <p class="text-xs text-slate-400">music_app.py</p>
+                    </div>
+                    <!-- Arrow -->
+                    <div class="text-teal-400 text-2xl font-mono hidden md:block">&#x2192;</div>
+                    <!-- Column 3: DevOps & External -->
+                     <div class="flex flex-col gap-4">
+                        <div class="p-4 bg-slate-700 rounded-lg">
+                            <h3 class="font-bold text-white">DevOps Pipeline</h3>
+                            <p class="text-xs text-slate-400">GitHub Actions, Docker</p>
+                        </div>
+                        <div class="p-4 bg-slate-700 rounded-lg">
+                             <h3 class="font-bold text-white">External APIs</h3>
+                            <p class="text-xs text-slate-400">Last.fm, Google Gemini</p>
+                        </div>
+                         <div class="p-4 bg-slate-700 rounded-lg">
+                             <h3 class="font-bold text-white">Cloud Platform</h3>
+                            <p class="text-xs text-slate-400">Render</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Development Plan Section -->
+        <section id="plan" class="mb-12">
+            <h2 class="text-3xl font-bold text-center mb-12 text-teal-400">แผนการพัฒนา (Development Plan)</h2>
+            <p class="text-center text-slate-400 max-w-3xl mx-auto mb-12">
+                การพัฒนาถูกแบ่งออกเป็น 4 เฟสหลัก ตั้งแต่การเตรียมความพร้อม, การสร้างแกนหลักของโปรแกรม, การพัฒนาส่วนติดต่อผู้ใช้, ไปจนถึงการเพิ่มฟีเจอร์ขั้นสูงและการนำขึ้นสู่ระบบคลาวด์ คลิกที่แต่ละเฟสเพื่อดูรายละเอียด
+            </p>
+            <div class="relative border-l-2 border-slate-700 ml-4 md:ml-0">
+                <!-- Timeline Item: P-0 -->
+                <div class="mb-10 ml-8 relative timeline-item">
+                    <h3 class="text-xl font-semibold text-white cursor-pointer" onclick="togglePhase('p0')">P-0: Artifact Readiness <span class="text-teal-400">(1 Hour)</span></h3>
+                    <p class="text-slate-400">เตรียมความพร้อมของโปรเจกต์และ Dependencies</p>
+                    <div id="p0-content" class="phase-content mt-4 bg-slate-800/50 p-4 rounded-lg">
+                         <ul class="list-disc list-inside text-slate-300">
+                           <li>ตรวจสอบ Python Environment</li>
+                           <li>สร้าง `requirements.txt` และติดตั้ง Dependencies</li>
+                           <li>สร้างโครงสร้าง Directory แบบ Flat Structure</li>
+                           <li>เริ่มต้น Version Control ด้วย Git และสร้าง `.gitignore`</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Timeline Item: P-1 -->
+                <div class="mb-10 ml-8 relative timeline-item">
+                    <h3 class="text-xl font-semibold text-white cursor-pointer" onclick="togglePhase('p1')">P-1: Foundation & Core Logic <span class="text-teal-400">(8 Hours)</span></h3>
+                    <p class="text-slate-400">สร้างแกนหลักของแอปพลิเคชัน (OOP Models) และเชื่อมต่อ API</p>
+                     <div id="p1-content" class="phase-content mt-4 bg-slate-800/50 p-4 rounded-lg">
+                        <ul class="list-disc list-inside text-slate-300">
+                           <li>กำหนด Data Models (คลาส Track, Artist)</li>
+                           <li>สร้าง API Client เพื่อเชื่อมต่อ Last.fm API</li>
+                           <li>พัฒนา Playlist Manager Logic</li>
+                           <li>แก้ไขปัญหาการ Export ไฟล์ CSV ให้รองรับภาษาไทย</li>
+                        </ul>
+                    </div>
+                </div>
+                 <!-- Timeline Item: P-2 -->
+                <div class="mb-10 ml-8 relative timeline-item">
+                    <h3 class="text-xl font-semibold text-white cursor-pointer" onclick="togglePhase('p2')">P-2: UI/UX Development <span class="text-teal-400">(10 Hours)</span></h3>
+                    <p class="text-slate-400">พัฒนาส่วนติดต่อผู้ใช้ (UI) สองเวอร์ชัน</p>
+                     <div id="p2-content" class="phase-content mt-4 bg-slate-800/50 p-4 rounded-lg">
+                         <ul class="list-disc list-inside text-slate-300">
+                           <li>สร้าง Desktop App UI ด้วย ttkbootstrap ให้สวยงาม</li>
+                           <li>เชื่อม Desktop App เข้ากับ Core Logic</li>
+                           <li>สร้าง Web App UI แบบ Single-Page ด้วย HTML/JS/TailwindCSS</li>
+                           <li>พัฒนา Logic ในฝั่ง JavaScript เพื่อให้ Web App ทำงานได้สมบูรณ์</li>
+                        </ul>
+                    </div>
+                </div>
+                 <!-- Timeline Item: P-3 -->
+                <div class="mb-10 ml-8 relative timeline-item">
+                    <h3 class="text-xl font-semibold text-white cursor-pointer" onclick="togglePhase('p3')">P-3: Advanced Features & Deployment <span class="text-teal-400">(8 Hours)</span></h3>
+                    <p class="text-slate-400">เพิ่มฟีเจอร์ AI, สร้าง CI/CD Pipeline, และ Deploy ขึ้นสู่ Cloud</p>
+                     <div id="p3-content" class="phase-content mt-4 bg-slate-800/50 p-4 rounded-lg">
+                         <ul class="list-disc list-inside text-slate-300">
+                           <li>**AI Integration:** เพิ่มฟีเจอร์ "Generate AI Summary" โดยเชื่อมต่อกับ Google Gemini API</li>
+                           <li>**CI/CD Pipeline:** สร้าง Workflow ใน GitHub Actions เพื่อ build Docker image และ push ไปยัง GHCR โดยอัตโนมัติ</li>
+                           <li>**Cloud Deployment:** นำ Docker image ไป Deploy บนแพลตฟอร์ม Render ให้สามารถเข้าถึงได้ผ่าน Public URL</li>
+                            <li>**Final Documentation:** อัปเดต `README.md` ให้สมบูรณ์พร้อม Live URL</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 border-t border-slate-700">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-slate-400">
+            <p>&copy; 2025 - Project Showcase for Music Discovery AI</p>
+        </div>
+    </footer>
+
+    <script>
+        let openPhaseId = null;
+
+        function togglePhase(phaseId) {
+            const content = document.getElementById(phaseId + '-content');
+            
+            // Close the currently open phase if it's not the one being clicked
+            if (openPhaseId && openPhaseId !== phaseId) {
+                const openContent = document.getElementById(openPhaseId + '-content');
+                if (openContent) {
+                    openContent.classList.remove('open');
+                }
+            }
+
+            // Toggle the clicked phase
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                openPhaseId = null;
+            } else {
+                content.classList.add('open');
+                openPhaseId = phaseId;
+            }
+        }
+    </script>
+</body>
+</html>
