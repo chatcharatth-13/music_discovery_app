@@ -1,14 +1,32 @@
 # 🎵 Music Discovery Project (Desktop + Web)
 
-A Python-based toolkit for music discovery, featuring both a desktop and web-based UI.
-Built with Python and Tkinter for the desktop app, and HTML/JS for the web interface. Data is fetched from the Last.fm API. The web application is containerized with Docker for easy deployment.
+Welcome to the Music Discovery App, a comprehensive application designed to help users explore new music through a powerful and intuitive interface. This project features two distinct user experiences: a modern desktop GUI and a feature-rich web application, both powered by the Last.fm API. The web app is enhanced with AI-powered playlist summaries using Google's Gemini AI and is deployed to the cloud via a full CI/CD pipeline.
 
+Live Demo: https://music-discovery-app-aq3i.onrender.com/
 
-## ✨ Features
-- Artist Search: Find top tracks for any artist.
-- Similar Artists: Get recommendations based on your favorite artists.
-- Genre Exploration: Discover popular tracks within a specific genre.
-- Playlist Export: Save an artist's top 10 tracks to a .csv file.
+## ✨ Key Features
+# This application is packed with features designed for a seamless music discovery experience:
+- Dual Interfaces: Choose between a polished Desktop App (built with Python/Tkinter) or a responsive Web App.
+- Multi-faceted Search:
+  - Discover tracks by searching for any Genre.
+  - Find new artists by searching for artists Similar to your favorites.
+- Dynamic Playlist Creation:
+    - Automatically build a Top 10 Playlist for any artist.
+    - Manually Add individual tracks from genre searches to create a custom playlist.
+
+- ✨ AI-Powered Summaries: Utilizes the Google Gemini AI to generate creative, descriptive summaries of your custom playlists, describing their overall mood and vibe.
+- Data Portability: Export any playlist you create to a .CSV file, correctly formatted for Excel.
+- Automated CI/CD Pipeline: Integrates with GitHub Actions to automatically build and publish a new Docker image to the GitHub Container Registry (GHCR) on every push to the main branch.
+- Cloud Deployed: The web application is live and publicly accessible, deployed on Render.
+
+## 🛠️ Tech Stack & Architecture
+# This project utilizes a modern stack to deliver a robust and feature-rich experience.
+- Backend & Core Logic: Python, Object-Oriented Programming (OOP)
+- Desktop GUI: Tkinter, ttkbootstrap for modern themes
+- Web Frontend: HTML, Tailwind CSS, Vanilla JavaScript
+- APIs: Last.fm (for music data), Google Gemini AI (for playlist summaries)
+- DevOps: Docker, Docker Compose, GitHub Actions (CI/CD)
+- Cloud Platform: Render
 
 ## 🚀 Getting Started
 
@@ -26,7 +44,7 @@ The application requires a Last.fm API key to function.
 - Replace the placeholder string "YOUR_API_KEY" with the key you obtained.
 
 # In music_app.py
-API_KEY = "ํYOUR API KEY" # <-- Paste your key here
+API_KEY = "ํYOUR API KEY" # <-- Paste your Last.fm key here
 
 # 💻 How to Run
 You can run the application in two different ways.
