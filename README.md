@@ -89,9 +89,9 @@ Prerequisite: Docker Desktop must be installed and running.
 
 **Vejwasu Boonyor (Earth)**
 * **Self Grade**
-    * API/DB Validation: 4
-    * Code Base Structure: 3.5
-    * Test Coverage (Mocking): 4
+    * API/DB Validation: 2.5
+    * Code Base Structure: 2.5
+    * Test Coverage (Mocking): 2.5
 * **Peer Grade**
     * API/DB Validation: 1
     * Code Base Structure: 1
