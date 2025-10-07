@@ -147,15 +147,18 @@ Using OpenAI’s GPT model, your playlist can be summarized with:
 ## 🧩 Project Structure
 
 ```
-music-discovery-ai/
-│
-├── desktop_app.py         # Tkinter desktop interface
-├── server.py              # Flask backend (secure proxy)
-├── static/                # Frontend assets (JS, CSS, etc.)
-├── templates/             # HTML pages for web app
-├── requirements.txt       # Python dependencies
-├── Dockerfile             # Docker configuration
-└── README.md              # Project documentation
+music-discovery-app/
+├── .github/
+│   └── workflows/
+│       └── docker-image.yml
+├── .gitignore
+├── desktop_app.py
+├── Dockerfile
+├── index.html
+├── music_app.py
+├── README.md
+├── requirements.txt
+└── server.py
 ```
 
 ---
