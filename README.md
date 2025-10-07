@@ -76,5 +76,34 @@ Prerequisite: Docker Desktop must be installed and running.
 - Open your browser and navigate to `http://localhost:8080.`
 - You will be prompted to enter your API key on first launch.
 
+## 👤 Authors
+**Chatcharat Thongsuepsai (Knight)**
+* **Self Grade**
+    * Contribution: 10
+    * Communication: 10
+    * Collaboration: 10
+* **Peer Grade**
+    * Contribution: 10
+    * Communication: 10
+    * Collaboration: 10
+* **Weighted Average by Source: Self Grade: 30%, Peer Grade: 70%**
+    * Avg Self Grade: 10
+    * Avg Peer Grade: 10
+    * Final Weighted Score: 10
+
+**Vejwasu Boonyor (Earth)**
+* **Self Grade**
+    * Contribution: 8
+    * Communication: 7
+    * Collaboration: 8
+* **Peer Grade**
+    * Contribution: 1
+    * Communication: 1
+    * Collaboration: 1
+* **Weighted Average by Source: Self Grade: 30%, Peer Grade: 70%**
+    * Avg Self Grade: 7.67
+    * Avg Peer Grade: 1
+    * Final Weighted Score: 3
+
 ## Presentation
 * **Presentation:** [Canva](https://www.canva.com/design/DAG080yKLBY/Na_3QYv2L9UHs8icxmwIrg/view?utm_content=DAG080yKLBY&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hd521b16a5d)
