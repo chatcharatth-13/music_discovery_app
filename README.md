@@ -1,101 +1,179 @@
-# 🎵 Music Discovery Project (Desktop + Web)
+# 🎵 Music Discovery AI (Secure Edition)
 
-Welcome to the Music Discovery App, a comprehensive application designed to help users explore new music through a powerful and intuitive interface. This project features two distinct user experiences: a modern desktop GUI and a feature-rich web application, both powered by the Last.fm API. The web app is enhanced with AI-powered playlist summaries using Google's Gemini AI and is deployed to the cloud via a full CI/CD pipeline.
+Welcome to **Music Discovery AI**, a comprehensive app designed to help users explore new music through a powerful and intuitive interface.  
+It features **two user experiences** — a modern **Desktop GUI** and a **secure Web App**, both powered by the **Last.fm API** and enhanced with **AI-powered playlist summaries** using the OpenAI GPT API.
 
-Live Demo: https://music-discovery-app-aq3i.onrender.com/
+🌐 **Live Demo:** [music-discovery-app-aq3i.onrender.com](https://music-discovery-app-6fr7.onrender.com)
+
+---
 
 ## ✨ Key Features
-This application is packed with features designed for a seamless music discovery experience:
-- Dual Interfaces: Choose between a polished Desktop App (built with Python/Tkinter) or a responsive Web App.
-- Multi-faceted Search:
-  - Discover tracks by searching for any Genre.
-  - Find new artists by searching for artists Similar to your favorites.
-- Dynamic Playlist Creation:
-    - Automatically build a Top 10 Playlist for any artist.
-    - Manually Add individual tracks from genre searches to create a custom playlist.
 
-- ✨ AI-Powered Summaries: Utilizes the Google Gemini AI to generate creative, descriptive summaries of your custom playlists, describing their overall mood and vibe.
-- Data Portability: Export any playlist you create to a .CSV file, correctly formatted for Excel.
-- Automated CI/CD Pipeline: Integrates with GitHub Actions to automatically build and publish a new Docker image to the GitHub Container Registry (GHCR) on every push to the main branch.
-- Cloud Deployed: The web application is live and publicly accessible, deployed on Render.
+- **🎨 Dual Interfaces**
+  - 🖥️ **Desktop App** (Python + Tkinter)
+  - 🌐 **Web App** (HTML, Tailwind CSS, JavaScript)
+
+- **🔒 Secure Backend Proxy**
+  - Flask backend securely manages all API keys.
+  - Prevents exposure of sensitive information to browsers.
+
+- **🎧 Multi-Faceted Search**
+  - Search tracks by **genre**
+  - Discover **similar artists**
+  - Build **Top 10 Playlists** automatically
+  - Add or remove tracks manually
+  - **Clear playlists** easily
+
+- **🤖 AI-Powered Summaries**
+  - Uses OpenAI GPT API to describe your playlist’s **mood**, **vibe**, and **energy**
+
+- **📦 Data Portability**
+  - Export playlists to `.CSV` with **full Thai language support**
+
+- **⚙️ Automated CI/CD Pipeline**
+  - GitHub Actions automatically builds and pushes Docker images to GHCR on every commit
+
+- **☁️ Cloud Deployment**
+  - Secure web app live on **Render**
+
+---
 
 ## 🛠️ Tech Stack & Architecture
-This project utilizes a modern stack to deliver a robust and feature-rich experience.
-- Backend & Core Logic: Python, Object-Oriented Programming (OOP)
-- Desktop GUI: Tkinter, ttkbootstrap for modern themes
-- Web Frontend: HTML, Tailwind CSS, Vanilla JavaScript
-- APIs: Last.fm (for music data), Google Gemini AI (for playlist summaries)
-- DevOps: Docker, Docker Compose, GitHub Actions (CI/CD)
-- Cloud Platform: Render
+
+| Layer | Technology |
+|-------|-------------|
+| **Backend & Core Logic** | Python, Flask, OOP |
+| **Desktop GUI** | Tkinter, ttkbootstrap |
+| **Frontend** | HTML, Tailwind CSS, Vanilla JS |
+| **APIs** | Last.fm, OpenAI GPT |
+| **DevOps** | Docker, Gunicorn, GitHub Actions |
+| **Cloud Platform** | Render |
+
+---
 
 ## 🚀 Getting Started
 
-Follow these steps to configure the application before running it.
+Follow these steps to set up the project locally.
 
-1. Get a Last.fm API Key
-The application requires a Last.fm API key to function.
+### 1️⃣ Obtain API Keys
 
--   Navigate to **[https://www.last.fm/api/account/create](https://www.last.fm/api/account/create)**.
--   Fill out the application form to receive your personal **API Key**.
+#### 🔑 Last.fm API
+1. Go to [Last.fm API Account Creation](https://www.last.fm/api/account/create)
+2. Fill out the form and obtain your **API key**
 
-2. Configure the Project
-- Open the music_app.py file.
-- Locate the API_KEY variable at the top of the file.
-- Replace the placeholder string "YOUR_API_KEY" with the key you obtained.
+#### 🔑 OpenAI API
+1. Go to [OpenAI API Keys](https://platform.openai.com/api-keys)
+2. Create an account and generate a **new API key**
+3. (Optional) Add a payment method if required
 
-# In music_app.py
-API_KEY = "ํYOUR API KEY" # <-- Paste your Last.fm key here
+---
 
-# 💻 How to Run
-You can run the application in two different ways.
+## 💻 How to Run
 
-## 🖥️ Option 1: Run the Desktop App (Local)
-This method runs the native tkinter GUI on your machine.
-1. Install dependencies:
+You can run this project in **two ways** — as a desktop app or as a secure web app.
 
-    `pip install requests`
+---
 
-2. Run the application:
+### 🖥️ Option 1: Run the Desktop App (Local)
 
-    `python desktop_app.py`
+1. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
 
-## 🐳 Option 2: Run the Web App (Docker)
-This method uses Docker to build and run the web interface in a container.
-Prerequisite: Docker Desktop must be installed and running.
+2. **Add API Key**
+   Open `music_app.py` and paste your Last.fm API key:
 
-1. Build the Docker image:
+   ```python
+   API_KEY = "YOUR_LASTFM_API_KEY_HERE"
+   ```
 
-    `docker build -t music-app .`
+3. **Run the App**
 
-2. Run the Docker container:
+   ```bash
+   python desktop_app.py
+   ```
 
-    `docker run -p 8080:8000 music-app`
+---
 
-3. Access the application:
+### 🐳 Option 2: Run the Secure Web App (Local Development)
 
-- Open your browser and navigate to `http://localhost:8080.`
-- You will be prompted to enter your API key on first launch.
+1. **Install Dependencies**
 
-## 👤 Authors
-**Chatcharat Thongsuepsai (Knight)**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Set Environment Variables**
+
+   **Windows (PowerShell):**
+
+   ```powershell
+   $env:LASTFM_API_KEY="your_lastfm_api_key_here"
+   $env:OPENAI_API_KEY="your_openai_api_key_here"
+   ```
+
+   **macOS/Linux (bash):**
+
+   ```bash
+   export LASTFM_API_KEY="your_lastfm_api_key_here"
+   export OPENAI_API_KEY="your_openai_api_key_here"
+   ```
+
+3. **Run Flask Backend**
+
+   ```bash
+   python server.py
+   ```
+
+4. **Open Browser**
+   Navigate to:
+
+   ```
+   http://127.0.0.1:5000
+   ```
+
+---
+
+## 🧠 AI Playlist Summaries
+
+Using OpenAI’s GPT model, your playlist can be summarized with:
+
+* Emotional tone & genre mix
+* Descriptive vibe (e.g., “a moody blend of chillwave and indie pop”)
+* Suggestions for similar artists or songs
+
+---
+
+## 🧩 Project Structure
+
+```
+music-discovery-ai/
+│
+├── desktop_app.py         # Tkinter desktop interface
+├── server.py              # Flask backend (secure proxy)
+├── static/                # Frontend assets (JS, CSS, etc.)
+├── templates/             # HTML pages for web app
+├── requirements.txt       # Python dependencies
+├── Dockerfile             # Docker configuration
+└── README.md              # Project documentation
+```
+
+---
+
+## 🚢 CI/CD Pipeline Overview
+
+✅ **GitHub Actions** — Builds & pushes Docker image to GHCR on every push
+
+✅ **Render Deployment** — Automatically redeploys from GHCR
+
+✅ **Environment Variables** securely stored in Render Dashboard
+
+---
+
+## 💬 Author
+
+Chatcharat Thongsuepsai (Knight)
 * **Self Grade**
     * API/DB Validation: 5
     * Code Base Structure: 5
     * Test Coverage (Mocking): 5
-* **Peer Grade**
-    * API/DB Validation: 5
-    * Code Base Structure: 4
-    * Test Coverage (Mocking): 4
-
-**Vejwasu Boonyor (Earth)**
-* **Self Grade**
-    * API/DB Validation: 2.5
-    * Code Base Structure: 2.5
-    * Test Coverage (Mocking): 2.5
-* **Peer Grade**
-    * API/DB Validation: 1
-    * Code Base Structure: 1
-    * Test Coverage (Mocking): 1
-
-## Presentation
-* **Presentation:** [Canva](https://www.canva.com/design/DAG080yKLBY/Na_3QYv2L9UHs8icxmwIrg/view?utm_content=DAG080yKLBY&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hd521b16a5d)
