@@ -79,31 +79,23 @@ Prerequisite: Docker Desktop must be installed and running.
 ## 👤 Authors
 **Chatcharat Thongsuepsai (Knight)**
 * **Self Grade**
-    * Contribution: 10
-    * Communication: 10
-    * Collaboration: 10
+    * API/DB Validation: 5
+    * Code Base Structure: 5
+    * Test Coverage (Mocking): 5
 * **Peer Grade**
-    * Contribution: 10
-    * Communication: 8
-    * Collaboration: 9
-* **Weighted Average by Source: Self Grade: 30%, Peer Grade: 70%**
-    * Avg Self Grade: 10.00
-    * Avg Peer Grade: 9.00
-    * Final Weighted Score: 9.30
+    * API/DB Validation: 5
+    * Code Base Structure: 4
+    * Test Coverage (Mocking): 4
 
 **Vejwasu Boonyor (Earth)**
 * **Self Grade**
-    * Contribution: 8
-    * Communication: 7
-    * Collaboration: 8
+    * API/DB Validation: 4
+    * Code Base Structure: 3.5
+    * Test Coverage (Mocking): 4
 * **Peer Grade**
-    * Contribution: 1
-    * Communication: 1
-    * Collaboration: 1
-* **Weighted Average by Source: Self Grade: 30%, Peer Grade: 70%**
-    * Avg Self Grade: 7.67
-    * Avg Peer Grade: 1
-    * Final Weighted Score: 3
+    * API/DB Validation: 1
+    * Code Base Structure: 1
+    * Test Coverage (Mocking): 1
 
 ## Presentation
 * **Presentation:** [Canva](https://www.canva.com/design/DAG080yKLBY/Na_3QYv2L9UHs8icxmwIrg/view?utm_content=DAG080yKLBY&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hd521b16a5d)
