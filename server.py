@@ -5,15 +5,13 @@ from flask import Flask, jsonify, request, send_from_directory
 app = Flask(__name__, static_folder='.', static_url_path='')
 
 # --- Environment Variables ---
-# For security, API keys are loaded from environment variables, not hardcoded.
 LASTFM_API_KEY = os.environ.get('LASTFM_API_KEY')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
-# --- API Routes (Our Proxy Endpoints) ---
+# --- API Routes ---
 
 @app.route('/api/lastfm', methods=['GET'])
 def lastfm_proxy():
-    """Proxies requests to the Last.fm API."""
     if not LASTFM_API_KEY:
         return jsonify({"error": "Last.fm API key not configured on server"}), 500
 
@@ -23,35 +21,41 @@ def lastfm_proxy():
 
     try:
         response = requests.get("https://ws.audioscrobbler.com/2.0/", params=params)
-        response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
+        response.raise_for_status()
         return jsonify(response.json())
     except requests.exceptions.RequestException as e:
         print(f"Error calling Last.fm API: {e}")
-        return jsonify({"error": "Failed to fetch data from Last.fm"}), 502 # Bad Gateway
+        return jsonify({"error": "Failed to fetch data from Last.fm"}), 502
 
 @app.route('/api/openai', methods=['POST'])
 def openai_proxy():
-    """Proxies requests to the OpenAI API."""
     if not OPENAI_API_KEY:
         return jsonify({"error": "OpenAI API key not configured on server"}), 500
 
     client_data = request.json
     
-    payload = {
-        "model": "gpt-3.5-turbo",
-        "messages": client_data.get('messages'),
-        "temperature": 0.7,
-    }
-
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'Bearer {OPENAI_API_KEY}'
-    }
+    # --- THIS IS THE NEW DEBUGGING LINE ---
+    print(f"Received data from frontend: {client_data}") 
+    # This will show us exactly what the browser sent.
 
     try:
+        payload = {
+            "model": "gpt-3.5-turbo",
+            "messages": client_data['messages'], # Changed to use direct access for clearer error
+            "temperature": 0.7,
+        }
+
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {OPENAI_API_KEY}'
+        }
+
         response = requests.post('https://api.openai.com/v1/chat/completions', json=payload, headers=headers)
         response.raise_for_status()
         return jsonify(response.json())
+    except (KeyError, TypeError) as e:
+        print(f"Data format error from frontend: {e}")
+        return jsonify({"error": "Invalid data format received from frontend."}), 400
     except requests.exceptions.RequestException as e:
         print(f"Error calling OpenAI API: {e}")
         return jsonify({"error": "Failed to fetch data from OpenAI"}), 502
@@ -59,7 +63,6 @@ def openai_proxy():
 # --- Serve Frontend ---
 @app.route('/')
 def serve_index():
-    """Serves the main index.html file."""
     return send_from_directory('.', 'index.html')
 
 if __name__ == '__main__':
