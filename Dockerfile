@@ -1,21 +1,20 @@
-# Use an official lightweight Python image as a parent image
+# Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements file into the container at /app
+# Copy the dependencies file to the working directory
 COPY requirements.txt .
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the web application file into the container
-COPY index.html .
+# Copy the rest of the application code to the working directory
+COPY . .
 
-# Make port 8000 available to the world outside this container
+# Expose the port the app runs on
 EXPOSE 8000
 
-# Run a simple web server when the container launches
-# This command serves the files in the current directory ( /app ) on port 8000
-CMD [ "python", "-m", "http.server", "8000" ]
+# Command to run the application using a production-ready server (Gunicorn)
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "server:app"]

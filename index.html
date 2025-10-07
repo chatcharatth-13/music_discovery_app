@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Discovery App - AI Edition</title>
+    <title>Music Discovery App - Secure Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -23,13 +23,14 @@
 </head>
 <body class="bg-gray-900 text-white flex flex-col items-center p-4 md:p-8 min-h-screen">
 
+    <!-- The Last.fm key modal remains for UX, but the actual key is now server-side -->
     <div id="api-key-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50 p-4">
         <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md text-center border border-gray-700">
             <h2 class="text-2xl font-bold mb-4 text-cyan-400">Welcome!</h2>
             <p class="mb-6 text-gray-300">Please enter your Last.fm API Key to begin discovering music.</p>
             <input type="text" id="lastfm-api-key-input" placeholder="Enter Last.fm API Key" class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 mb-4 text-white">
             <button onclick="saveApiKey()" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105">Save Key & Start</button>
-             <p class="text-xs text-gray-500 mt-4">You can get a key from <a href="https://www.last.fm/api/account/create" target="_blank" class="underline hover:text-cyan-400">Last.fm</a>.</p>
+              <p class="text-xs text-gray-500 mt-4">You can get a key from <a href="https://www.last.fm/api/account/create" target="_blank" class="underline hover:text-cyan-400">Last.fm</a>.</p>
         </div>
     </div>
 
@@ -61,18 +62,19 @@
 
         <!-- Results Display -->
         <div id="results-container" class="bg-gray-800 p-6 rounded-2xl shadow-lg mb-8 border border-gray-700 min-h-[200px]">
-             <h2 class="text-xl font-bold mb-4 text-gray-300">Results</h2>
-             <div id="results" class="text-gray-400">Search for something to see results here.</div>
+              <h2 class="text-xl font-bold mb-4 text-gray-300">Results</h2>
+              <div id="results" class="text-gray-400">Search for something to see results here.</div>
         </div>
 
         <!-- Playlist & AI Summary -->
         <div class="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700">
             <div class="flex justify-between items-center mb-4">
-                 <h2 class="text-xl font-bold text-gray-300">Your Playlist</h2>
-                 <div class="flex gap-2">
+                  <h2 class="text-xl font-bold text-gray-300">Your Playlist</h2>
+                  <div class="flex gap-2">
+                    <button id="clear-playlist-btn" onclick="clearPlaylist()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>Clear All</button>
                     <button id="ai-summary-btn" onclick="generateAISummary()" class="bg-gradient-to-r from-teal-500 to-cyan-600 hover:opacity-90 text-white font-bold py-2 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>✨ Generate AI Summary</button>
                     <button onclick="exportPlaylistToCSV()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition">Export CSV</button>
-                 </div>
+                  </div>
             </div>
             <div id="playlist" class="mb-6 min-h-[100px] text-gray-400">Your playlist is empty. Build a Top 10 or add tracks from genre search.</div>
             
@@ -85,15 +87,12 @@
     </div>
 
     <script>
-        // --- CONFIGURATION ---
-        const GEMINI_API_KEY = "AIzaSyBn9W6orn_umvUZcXfrNWEcutQdk0QLoKg"; // Your proven-working key
-        let LASTFM_API_KEY = localStorage.getItem('lastfmApiKey');
-        const BASE_URL = "https://ws.audioscrobbler.com/2.0/";
-
+        // --- NO API KEYS ARE STORED HERE ANYMORE ---
+        let LASTFM_API_KEY_CLIENT_SIDE_TEMP = localStorage.getItem('lastfmApiKey');
         let playlist = [];
 
         document.addEventListener('DOMContentLoaded', () => {
-            if (!LASTFM_API_KEY) {
+            if (!LASTFM_API_KEY_CLIENT_SIDE_TEMP) {
                 document.getElementById('api-key-modal').style.display = 'flex';
             } else {
                  document.getElementById('api-key-modal').style.display = 'none';
@@ -104,7 +103,7 @@
         function saveApiKey() {
             const input = document.getElementById('lastfm-api-key-input').value;
             if (input && input.trim() !== '') {
-                LASTFM_API_KEY = input;
+                LASTFM_API_KEY_CLIENT_SIDE_TEMP = input;
                 localStorage.setItem('lastfmApiKey', input);
                 document.getElementById('api-key-modal').style.display = 'none';
             } else {
@@ -112,24 +111,25 @@
             }
         }
         
+        // --- MODIFIED API CALL ---
         async function apiCall(params) {
-            if (!LASTFM_API_KEY) {
-                alert("Last.fm API Key is not set!");
-                document.getElementById('api-key-modal').style.display = 'flex';
-                return;
-            }
-            const urlParams = new URLSearchParams({ ...params, api_key: LASTFM_API_KEY, format: 'json' });
-            const url = `${BASE_URL}?${urlParams}`;
+            // This now calls our OWN backend server, not Last.fm directly
+            const urlParams = new URLSearchParams(params);
+            // The request is sent to our server's proxy endpoint
+            const url = `/api/lastfm?${urlParams}`;
             
             document.getElementById('results').innerHTML = '<div class="flex justify-center items-center h-full"><div class="spinner"></div></div>';
 
             try {
                 const response = await fetch(url);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Server Error: ${errorData.error || response.statusText}`);
+                }
                 return await response.json();
             } catch (error) {
                 console.error("API call failed:", error);
-                document.getElementById('results').innerText = `Error: ${error.message}. Please check your API key and network connection.`;
+                document.getElementById('results').innerText = `Error: ${error.message}. Please check network connection.`;
                 return null;
             }
         }
@@ -156,18 +156,16 @@
             }
         }
         
-        // --- PLAYLIST LOGIC ---
+        // --- PLAYLIST LOGIC (Unchanged) ---
         function addTrackToPlaylist(name, artist) {
             playlist.push({ name: name, artist: artist });
             updatePlaylistView();
             const resultsEl = document.getElementById('results');
-            const feedbackEl = document.getElementById('feedback');
-            if (feedbackEl) feedbackEl.remove(); // Remove old feedback first
             resultsEl.insertAdjacentHTML('afterbegin', `<div id="feedback" class="p-3 mb-4 bg-green-500/20 text-green-300 rounded-lg">Added "${name}" to your playlist!</div>`);
             setTimeout(() => {
-                const currentFeedback = document.getElementById('feedback');
-                if(currentFeedback) currentFeedback.remove();
-            }, 2500);
+                const feedbackEl = document.getElementById('feedback');
+                if(feedbackEl) feedbackEl.remove();
+            }, 2000);
         }
 
         async function getTopTracks(artistName) {
@@ -181,16 +179,23 @@
             }
         }
 
-        // --- UI DISPLAY ---
+        function removeTrackFromPlaylist(index) {
+            playlist.splice(index, 1);
+            updatePlaylistView();
+        }
+
+        function clearPlaylist() {
+            playlist = [];
+            updatePlaylistView();
+        }
+
+        // --- UI DISPLAY (Unchanged) ---
         function displayTracks(tracks) {
             let html = '<ul class="space-y-2">';
             tracks.forEach(track => {
                 const safeTrackName = track.name.replace(/'/g, "\\'");
                 const safeArtistName = track.artist.name.replace(/'/g, "\\'");
-                html += `<li class="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                            <div>${track.name} <span class="text-gray-400">by ${track.artist.name}</span></div>
-                            <button onclick="addTrackToPlaylist('${safeTrackName}', '${safeArtistName}')" class="bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-bold py-1 px-3 rounded-md transition">Add</button>
-                         </li>`;
+                html += `<li class="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg"><div>${track.name} <span class="text-gray-400">by ${track.artist.name}</span></div><button onclick="addTrackToPlaylist('${safeTrackName}', '${safeArtistName}')" class="bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-bold py-1 px-3 rounded-md transition">Add</button></li>`;
             });
             html += '</ul>';
             document.getElementById('results').innerHTML = html;
@@ -199,10 +204,7 @@
         function displayArtists(artists) {
             let html = '<ul class="space-y-2">';
             artists.forEach(artist => {
-                html += `<li class="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                            <span>${artist.name}</span>
-                            <button onclick="getTopTracks('${artist.name.replace(/'/g, "\\'")}')" class="bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold py-1 px-3 rounded-md transition">Build Top 10</button>
-                         </li>`;
+                html += `<li class="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg"><span>${artist.name}</span><button onclick="getTopTracks('${artist.name.replace(/'/g, "\\'")}')" class="bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold py-1 px-3 rounded-md transition">Build Top 10</button></li>`;
             });
             html += '</ul>';
             document.getElementById('results').innerHTML = html;
@@ -211,19 +213,22 @@
         function updatePlaylistView() {
             const playlistEl = document.getElementById('playlist');
             const aiButton = document.getElementById('ai-summary-btn');
+            const clearButton = document.getElementById('clear-playlist-btn');
 
             if (playlist.length === 0) {
                 playlistEl.innerHTML = '<p class="text-gray-400">Your playlist is empty. Build a Top 10 or add tracks from genre search.</p>';
                 aiButton.disabled = true;
+                clearButton.disabled = true;
                 document.getElementById('ai-summary-container').classList.add('hidden');
             } else {
-                let html = '<ol class="list-decimal list-inside space-y-2">';
-                playlist.forEach(track => {
-                    html += `<li class="text-gray-200">${track.name} <span class="text-gray-400">by ${track.artist}</span></li>`;
+                let html = '<ol class="space-y-2">';
+                playlist.forEach((track, index) => {
+                    html += `<li class="flex justify-between items-center p-2 rounded-md hover:bg-gray-700/50 text-gray-200"><span>${index + 1}. ${track.name} <span class="text-gray-400">by ${track.artist}</span></span><button onclick="removeTrackFromPlaylist(${index})" class="text-red-400 hover:text-red-300 text-sm font-bold py-1 px-2 rounded-md transition">Remove</button></li>`;
                 });
                 html += '</ol>';
                 playlistEl.innerHTML = html;
                 aiButton.disabled = false;
+                clearButton.disabled = false;
             }
         }
 
@@ -243,6 +248,7 @@
             document.body.removeChild(link);
         }
 
+        // --- MODIFIED AI INTEGRATION ---
         async function generateAISummary() {
             const summaryContainer = document.getElementById('ai-summary-container');
             const summaryEl = document.getElementById('ai-summary');
@@ -255,14 +261,33 @@
             const playlistText = playlist.map(t => `${t.name} by ${t.artist}`).join(', ');
             const systemPrompt = "You are a creative and knowledgeable music expert, like a radio DJ. Your tone is engaging and descriptive.";
             const userPrompt = `Based on the following playlist, write a short, creative paragraph (3-4 sentences) describing the overall mood, vibe, and genre of this collection. Playlist: ${playlistText}`;
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
-            const payload = { contents: [{ parts: [{ text: userPrompt }] }], systemInstruction: { parts: [{ text: systemPrompt }] },};
+
+            // This now calls our OWN backend server, not OpenAI directly
+            const apiUrl = '/api/openai';
+            
+            const payload = {
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: userPrompt }
+                ]
+            };
 
             try {
-                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) { const errorData = await response.json(); throw new Error(`API Error: ${errorData.error.message}`); }
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Server Error: ${errorData.error || 'Failed to generate summary'}`);
+                }
+
                 const result = await response.json();
-                summaryEl.innerText = result.candidates[0].content.parts[0].text;
+                const text = result.choices[0].message.content;
+                summaryEl.innerText = text;
+
             } catch (error) {
                 summaryEl.innerText = `An error occurred: ${error.message}`;
                 console.error("AI summary generation failed:", error);

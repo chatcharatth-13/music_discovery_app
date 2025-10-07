@@ -1,2 +1,7 @@
 requests
 ttkbootstrap
+openai
+flask
+flask-cors
+python-dotenv
+gunicorn
