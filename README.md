@@ -173,10 +173,13 @@ music-discovery-app/
 
 ---
 
-## 💬 Author
+## 👤 Author
 
 Chatcharat Thongsuepsai (Knight)
 * **Self Grade**
     * API/DB Validation: 5
     * Code Base Structure: 5
     * Test Coverage (Mocking): 5
+
+🎤 Presentation
+  * View Presentation Slides: [Canva Link](https://www.canva.com/design/DAG080yKLBY/Na_3QYv2L9UHs8icxmwIrg/view?utm_content=DAG080yKLBY&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hd521b16a5d)
