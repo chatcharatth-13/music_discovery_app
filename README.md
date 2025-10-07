@@ -84,12 +84,12 @@ Prerequisite: Docker Desktop must be installed and running.
     * Collaboration: 10
 * **Peer Grade**
     * Contribution: 10
-    * Communication: 10
-    * Collaboration: 10
+    * Communication: 8
+    * Collaboration: 9
 * **Weighted Average by Source: Self Grade: 30%, Peer Grade: 70%**
-    * Avg Self Grade: 10
-    * Avg Peer Grade: 10
-    * Final Weighted Score: 10
+    * Avg Self Grade: 10.00
+    * Avg Peer Grade: 9.00
+    * Final Weighted Score: 9.30
 
 **Vejwasu Boonyor (Earth)**
 * **Self Grade**
